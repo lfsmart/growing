@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>react 非组件化操作</title>
+    <script src="./lib/react.development.js"></script>
+    <script src="./lib/react-dom.development.js"></script>
+    <script src="./lib/babel.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+<script  type="text/babel">
+
+  const div = <div>
+    我是一个
+    <button onClick={ () => console.log( 'clicked' )}>我是按钮</button>
+  </div>;
+  const root = ReactDOM.createRoot( document.getElementById( 'root' ) ); 
+  root.render( div );
+
+</script>
