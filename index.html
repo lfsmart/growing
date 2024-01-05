@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>react 非组件化操作</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- <script src="https://cdn.bootcdn.net/ajax/libs/react/18.2.0/umd/react.development.js"></script> -->
+    <!-- <script src="https://cdn.bootcdn.net/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script> -->
+    <script src="./lib/react.development.js"></script>
+    <script src="./lib/react-dom.development.js"></script>
+  </body>
+</html>
+<script>
+
+   /**
+   * 1. 创建虚拟 dom
+   * 通过 React.createElement(elementName, attrs, ...children)函数，函数有三个参数
+   *  <1> elementName: 标签名
+   *  <2> attrs: 属性对象包含事件
+   *  <3> children: 或者更多都将被渲染为子组件
+   * 说明：react 对象一旦创建就无法修改，只能使用新创建的组件进行替换。
+   */
+
+   let handleClick = ()=>{};
+
+    // 直接使用 react 中的方法
+    const button = React.createElement( 'button', {
+      id: 'btn',
+      type: 'button',
+      className: 'button',
+      onClick: () => handleClick()
+    }, '我是 React 创建的 button' ); // 创建 VDOM
+
+    const div = React.createElement( 'div', {}, '我是 React 创建的 div ', button, '<br/>' ); // 创建 VDOM
+
+    /**
+     * ReactDOM.createRoot的作用:
+     * (1) 创建一个React根，用于挂载 React 组件。
+     * (2) 一旦创建了根，就可以通过根将 React 组件渲染到 DOM中。
+     * 与以前版本的 React.render()方法不同，ReactDOM.createRoot()允许将 React 组件渲染到指定的DOM节点上，而不是默认的 document.body。
+     * (3) ReactDOM.createRoot还支持并发模式，使得在服务器端渲染和流式渲染等场景下更加高效。
+    */
+    // 18 版本以前的版本中使用 React.render(div, document.getElementById( 'root' ) )
+    const root = ReactDOM.createRoot( document.getElementById( 'root' ) );
+
+    root.render( div ); // 将 VDOM -> dom
+
+    /**
+     * 如果修改内容，则需要重新创建整个组件，并替换原组件
+    */
+    handleClick = () => {
+      const button2 = React.createElement( 'button', {
+        id: 'btn',
+        type: 'button',
+        className: 'button',
+        onClick: () => console.log(123)
+      }, 'click me' );
+      const div = React.createElement( 'div', {}, '我是 React 创建的 div ', button2, '<br/>' ); // 创建 VDOM
+
+      // 修改后直接重新渲染当前组件即可
+      root.render( div ); // 仅渲染
+    }
+</script>
+xt
