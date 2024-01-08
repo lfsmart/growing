@@ -1,10 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import { RouterProvider } from 'react-router-dom';
+import { router } from '@/router'; 
+import '@/assets/index.css';
+export function Fallback() {
+  // 可以用做初始化 loading 效果
+  return <p>Performing initial data load</p>;
+}
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+const root = ReactDOM.createRoot(document.getElementById('root')!)
+root.render(
+  // <React.StrictMode>
+    <RouterProvider router={ router } fallbackElement={<Fallback />}></RouterProvider>
+  // </React.StrictMode>,
 )
