@@ -536,4 +536,141 @@ export default App;
 
 ### 11.1 useRef 
 
-​	用 ref 引用一个值做记忆功能，
+​	useRef 的功能： 第一，保存变量。第二，绑定 dom 通过 ref 属性。用 ref 引用一个值做记忆功能，ref 定义的变量类似于在 constructor 函数中定义的变量。可以通过 react 中的钩子函数 `useRef` 存储数据状态，使用 useRef 定义的数据不会导致视图的更新和函数的再次 render。仅用于变量的存储，并记录上一次的值，也就是不会受到函数组件 render 的影响，类似于函数组件外部定义的全局变量，需要通过 current 取到变量值。
+
+```tsx
+// class 组件
+class UseRef extends react.Component{
+  constructor(){
+    this.vars = 'lantian'
+  } 
+}
+// 函数组件
+const UseRef = () => {
+  const num = useRef(0);
+  console.log( num.current );
+  return <></>
+}
+```
+
+​	**应用场景一：**变量存储。
+
+只要触发 render 函数定义在函数组件的数据都会被重置，因此需要使用 useState 或 useRef 钩子记录数据状态，不会在 render 之后数据被重置。
+
+```tsx
+import { useRef, useState } from "react";
+export const UseRef = () => {
+  const [ count, setCount ] = useState(0);
+  const timer = useRef<OrNull<number>>(null);
+  const handleClick = () => {
+    setCount( count + 1 );
+    window.clearInterval( timer.current || 0 );
+    timer.current = window.setInterval( () => {
+      console.log( '我被调用了' );
+    }, 1000 );
+  }
+  return (
+      <button onClick={handleClick}>useRef, { count }</button>
+  );
+}
+```
+
+​	**应用场景二：**DOM 存储， 通过 ref 属性存储 dom 节点。
+
+```tsx
+import { useRef, useState } from "react";
+export const UseRef = () => {
+  const [ count, setCount ] = useState(0);
+  const btnRef = useRef<OrNull<HTMLButtonElement>>( null );
+  const handleClick = () => {
+    setCount( count + 1 );
+    btnRef!.current!.style.background = 'red';
+  };
+  return (
+    <button onClick={ handleClick } ref={ btnRef }>useRef, { count }</button>
+  );
+}
+```
+
+​	**应用场景三：** dom 的列表引用存储， 通过 `ref={(ref)=>getRefs( ref )}`。
+
+```tsx
+import { useRef, useState } from "react";
+export const UseRef = () => {
+  const refs = useRef<Array<OrNull<HTMLDivElement>>>([]);
+  const [ list, setList ] = useState([
+    { id: 1, text: '111' },
+    { id: 2, text: '222' },
+    { id: 3, text: '333' },
+  ]);
+  const handleClick = () => {
+    console.log( refs, 'refs' );
+  };
+  const getRefs = ( ref: OrNull<HTMLDivElement> ) => refs.current?.push( ref );
+  return (
+    <>
+      {
+        list.map( (item, index) => <div key={ item.id } ref={ (ref) => getRefs( ref ) }>{ item.text }</div>)
+      }
+    </>
+  );
+};
+```
+
+​	当组件添加 ref 属性的时候，需要 forwardRef 进行转发，forwardRef 让组件通过 ref 像父组件公开。父组件通过 ref 获取子组件的 ref 需要将子组件通过forwardRef 包裹。如下所示：
+
+```tsx
+import { useRef, useState, ReactNode, forwardRef } from "react";
+const MyInput = forwardRef<HTMLInputElement>((props, ref) => {
+  return <input ref={ ref }></input>
+})
+export const UseRef = () => {
+  const ref = useRef( null );
+  const handleClick = () => {
+    console.log( ref ); // 获取子组件 ref
+  }
+  return (
+    <>
+      <MyInput ref={ ref }></MyInput>
+      <button onClick={ handleClick }>button</button>
+    </>
+  );
+}
+```
+
+### 11.2 useImperativeHandle 
+
+​	`useImperativeHandle` 钩子函数用来暴漏指定的属性和方法，用于控制组件内部的方法类似 vue3.0 中的 `expose` 钩子函数，可以避免过多的暴露组件的 api，使用时避免 ref 的滥用。
+
+```tsx
+import { useRef, useState, ReactNode, forwardRef, useImperativeHandle } from "react";
+const MyInput = forwardRef((props, ref) => {
+  const inputRef = useRef<OrNull<HTMLInputElement>>(null)
+  useImperativeHandle( ref, () => ({
+      focus(){
+        inputRef?.current?.focus()
+      }
+    }) 
+  );
+  return <input ref={ inputRef }></input>
+})
+export const UseImperativeHandle = () => {
+  const ref = useRef<OrNull<HTMLElement>>( null );
+  const handleClick = () => {
+    ref.current?.focus() // 子组件获取焦点
+  }
+  return (
+    <>
+      <MyInput ref={ ref }></MyInput>
+      <button onClick={ handleClick }>button</button>
+    </>
+  );
+};
+```
+
+### 11.3 useEffect
+
+- **纯函数：**只负责自己的任务，有稳定的输入和输出，只要输入一定输出就确定，一一对应。它不会更改在函数调用前就已存在的对象或变量。
+
+- **副作用：**函数在执行过程中对外部造成的影响称之为副作用，但有时候需要初始化处理副作用，那么就需要 useEffect 钩子。
+
