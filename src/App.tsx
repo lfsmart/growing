@@ -1,18 +1,18 @@
-import { useState } from 'react'
+import { useState, ReactNode, useEffect, ChangeEvent } from "react";
+// const Counter = () => {
+//   const [ count, setCount ] = useState( 0 );
+//   return <button onClick={ () => setCount( count + 1 ) }>count,{ count }</button>
+// }
+function App(): ReactNode {
 
-function App() {
-  const [count, setCount] = useState(0)
-
+  const [ value, setValue ] = useState('');
+  const handleChange = (e: ChangeEvent<HTMLInputElement> ) => {
+    setValue( e.target.value );
+  }
   return (
-    <div className="card">
-      <button onClick={() => setCount((count) => count + 1)}>
-        count is {count}
-      </button>
-      <p>
-        Edit <code>src/App.tsx</code> and save to test HMR
-      </p>
+    <div className="card"  >
+      <input type="text" value={ value } onChange={ handleChange }/>
     </div>
-  )
+  );
 }
-
-export default App
+export default App;

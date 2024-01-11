@@ -13,6 +13,9 @@ export default defineConfig({
 
   // 启用 javascript
   css: {
+    modules: {
+      localsConvention: 'camelCase'
+    },
     preprocessorOptions: {
       less: {
         javascriptEnabled: true
