@@ -674,3 +674,161 @@ export const UseImperativeHandle = () => {
 
 - **副作用：**函数在执行过程中对外部造成的影响称之为副作用，但有时候需要初始化处理副作用，那么就需要 useEffect 钩子。
 
+```tsx
+import { useRef, useEffect } from "react";
+export const UseEffect = () => {
+  const inputRef = useRef<OrNull<HTMLInputElement>>( null );
+  useEffect( () => {
+    inputRef.current!.focus()
+  }, [])
+  return <input type="text" ref={ inputRef } />
+};
+```
+
+​	**分开处理：**多次调用 useEffect 即可。组件挂载或者更新会触发所有的 useEffect 钩子函数，如果不希望 render 后触发，可以指定第二个参数，决定回调函数的依赖状态项，如果依赖的状态发生了变化则触发钩子的回调函数，否则不触发。初始化时多个 useEffect 回调函数均触发，主要用于性能优化，组合了组件挂载和更新之后的操作。如下所示：
+
+```tsx
+export const UseEffect = () => {
+  const [ count, setCount ] = useState(0);
+  const [ msg, setMsg ] = useState( 'hi' );
+  const handleClick = () => {
+    setCount( count + 1)
+  }
+  useEffect( () => {
+    console.log( count );
+  })
+  useEffect( () => {
+    console.log( msg ); // 依赖项没有 msg, lint 会警告
+  },[]);
+  return <button onClick={ handleClick }>click me!</button>
+}
+```
+
+​	**尽量将函数定义在 useEffect 回调函数：**这里的函数是指依赖数据状态的函数，如果定义在函数组件中，会在每次 render 的时候从新创建新的函数，耗费性能。可以是用 useCallback 解决这个问题，在每次 render 的时候函数不会重新创建，依然是原始函数。
+
+```tsx
+export const UseEffect = () => {
+  const [ count, setCount ] = useState(0);
+  const handleClick = () => {
+    setCount( count + 1)
+  }
+  useEffect( () => {
+    const foo = () => {
+      console.log( count );
+    }
+    foo()
+  }, [ count ]);
+  return <button onClick={ handleClick }>click me!</button>
+}
+```
+
+​	**useEffect 清理：** 清理的逻辑如下所示：
+
+- 将组件挂载到页面时，将运行 setup 代码。
+- 重新渲染 依赖项 变更的组件后
+  - 首先，使用旧的 props 和 state 运行 cleanup 代码。
+  - 然后，使用新的 props 和 state 运行 setup 代码。
+- 当组件从页面卸载后，cleanup 代码 将运行最后一次。
+
+```tsx
+export const UseEffect = () => {
+  const [ count, setCount ] = useState( 0 );
+  const handleClick = () => {
+    setCount( count + 1)
+  }
+  useEffect( () => {
+    console.log( 'setup:', count );
+    return () => {
+      console.log( 'cleanup:', count );
+    }
+  }, [ count ]);
+  return <button onClick={ handleClick }>关闭聊天室,{count}</button>
+};
+```
+
+​	避免 useEffect 的依赖项是定义在函数组件中的引用类型数据，因为每次 render 后都会创建一个新的应用数据类型，这样不管引用类型的数据的值是否发生都会触发 useEffect 的回调函数。
+
+### 11.4 useEffectEvent
+
+​	当 useEffect 存在多个数据依赖项，会在状态依赖项中相互影响，如何精准的控制某一状态的改变才能触发回调函数，要么将相互影响的状态分开处理，要么通过 `react@18.2.x` 版本中的实验的钩子函数 `useEffectEvent` ，使用 [`useEffectEvent`](https://react.docschina.org/reference/react/experimental_useEffectEvent) 这个特殊的 Hook 从 Effect 中提取非响应式逻辑，[useEffect](https://react.docschina.org/reference/react/experimental_useEffectEvent) 。
+
+​	**安装：**
+
+```bash
+npm i -S react@experimental react-dom@experimental
+```
+
+​	**问题描述：** 在改变某一状态不希望触发另一状态的业务逻辑，如下所示，当 theme 状态改变，依赖 title 的业务逻辑代码也会从新执行，显然不符合逻辑，也造成了额外的开销，影响性能。
+
+```tsx
+const Chat = ({ title, theme }: { title: string, theme: string }) => {
+  useEffect( () => {
+    console.log( '进入', title );
+    console.log( 'theme', theme );
+    return () => {
+      console.log( 'cleanup: ', title, theme );
+    }
+  }, [ title, theme ]);
+  return <div> hello, chat</div>
+}
+
+export const UseEffect = () => {
+  const [ show, setShow ] = useState( true );
+  const [ isDark, setDark ] = useState( false );
+  const [ title, setTitle ] = useState( '情感聊天室' );
+  const handleClick = () => setShow( !show );
+  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => setTitle( e.target.value );
+  // 主体发生变化，useEffect 也会触发聊天室逻辑，显然不符合预期。
+  const handleCheckChange = (e: ChangeEvent<HTMLInputElement>) => setDark( e.target.checked );
+  return (
+    <>
+     <button onClick={ handleClick }>关闭聊天室</button>
+     <select name="select" onChange={ handleChange } value={ title }>
+       <option value="情感聊天室">情感聊天室</option>
+       <option value="体育聊天室">体育聊天室</option>
+     </select>
+     <input type="checkbox" checked={ isDark } onChange={ handleCheckChange }/>黑暗主题
+     { show && <Chat title={ title } theme={ isDark ? 'dark' : 'light' }></Chat> } 
+    </>
+  )
+}
+```
+
+​	**状态依赖要精准：**解决上面的多状态时，通过使用多个 `useEffect` ，按逻辑分开处理。这样可以避免不同的状态逻辑相互干扰，造成性能损耗和逻辑混乱。如下所示：
+
+```tsx
+const Chat = ({ title, theme }: { title: string, theme: string }) => {
+  useEffect( () => {
+    console.log( '进入', title );
+    console.log( 'theme', theme );
+    return () => {
+      console.log( 'cleanup: ', title, theme );
+    }
+  }, [ title ]);
+  useEffect( () => {
+    console.log( 111 );
+  }, [ theme ])
+  return <div> hello, chat</div>
+}
+```
+
+​	**useEffectEvent**：使用 [`useEffectEvent`](https://react.docschina.org/reference/react/experimental_useEffectEvent) 这个特殊的 Hook 从 useEffect 中提取非响应式逻辑。如下所示，使用 `useEffectEvent` 定义了函数 themeEffectEvent，是 theme 状态变为非响应式。
+
+```tsx
+const Chat = ({ title, theme }: { title: string, theme: string }) => {
+  const themeEffectEvent = useEffectEvent(() => {
+    console.log( '主体', theme );
+  });
+  useEffect( () => {
+    themeEffectEvent(); // 执行 useEffectEvent 钩子函数，这样改变 theme 的状态就不在影响其他依赖的数据状态了
+    console.log( '进入', title );
+    return () => {
+      console.log( 'cleanup: ', title );
+    }
+  }, [ title ]);
+  return <div> hellochat</div>
+}
+```
+
+### 11.5 useLayoutEffect
+

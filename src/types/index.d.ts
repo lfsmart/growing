@@ -1,12 +1,12 @@
 
-interface VoidFunction {
-  (...args?: any[]): void
+declare interface VoidFunction {
+  (...args?: unknown[]): void
 }
 
-interface Json extends object {
-  [key: string]: any;
+declare interface Json extends object {
+  [key: string]: unknown;
 }
 
-type OrNull<T> = T | null;
+declare type OrNull<T> = T | null;
 
-type OrUndef<T> = T | undefined;
+declare type OrUndef<T> = T | undefined;
