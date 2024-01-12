@@ -832,3 +832,8 @@ const Chat = ({ title, theme }: { title: string, theme: string }) => {
 
 ### 11.5 useLayoutEffect
 
+​	`useLayoutEffect` 是 [`useEffect`](https://react.docschina.org/reference/react/useEffect) 的一个版本，在浏览器重新绘制屏幕之前触发，在 useEffect 之前触发，钩子函数的回调都可以拿到 dom 元素。用于解决 useEffect 回调中处理页面逻辑闪屏问题。在用户没有注意到第一个额外渲染的情况下再次重新渲染。换句话说，`useLayoutEffect` 阻塞了浏览器的绘制。
+
+### 11.6 useInsertionEffect 
+
+​	`useInsertionEffect` 是为 CSS-in-JS 库的作者特意打造的。除非你正在使用 CSS-in-JS 库并且需要注入样式，否则你应该使用 [`useEffect`](https://react.docschina.org/reference/react/useEffect) 或者 [`useLayoutEffect`](https://react.docschina.org/reference/react/useLayoutEffect)。`useInsertionEffect` 可以在布局副作用触发之前将元素插入到 DOM 中。
