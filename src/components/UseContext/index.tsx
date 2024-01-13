@@ -25,12 +25,10 @@ export const UseContext = () => {
   const [ count, setCount ] = useState(0);
 
   return (
-    <>
     <Context.Provider value={ count }>
       <div> hello App</div>
       <button onClick={ () => setCount(count + 1)}>计数</button>
       <Head></Head>
     </Context.Provider>
-    </>
   )
 }

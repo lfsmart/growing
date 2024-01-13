@@ -978,3 +978,151 @@ export const UseContext = () => {
 
 ```
 
+### 11.9 reducer & context
+
+​	在 react 中也可以不使用 redux 来控制跨组件状态管理，通过 reducer 和 context 两个钩子函数，实现 redux 的能力。
+
+使用 createContext 创建上下文，通过上下文组件 `createContext .Provider` 作为通信的根组件，将状态数据 state 和 useReducer 中 dipatch 方法通过上下文组件属性 value 挂载到根组件，在子组件中通过 useContext 钩子函数使用上下文，即可获取上下文数据以及 `dispatch` 方法。如下所示：
+
+**创建上下文：** 为了方便上下文文件中包含了模块的部分数据类型，以及上下文 context 初始化数据。
+
+```ts
+// ./Context.ts
+import { useRef, useReducer, createContext, ReactNode, Dispatch, useContext  } from "react";
+export type Item = {
+  id: number;
+  title: string;
+}
+export type State = {
+  list: Item[];
+  title: string;
+}
+export const initState = {
+  title: '', 
+  list: [{
+    id: 1, title: 'aaa'
+  }]
+}
+export const Context = createContext<{
+  state: State;
+  dispatch?: React.Dispatch<Action<any>>
+}>({
+  state: initState,
+});
+```
+
+**定义context作用域：** 通过 `Context.Provider` 组件将子组件包裹，并将数据和方法通过属性 value 挂载到  `Context.Provider` 上。
+
+```tsx
+// ./index.tsx
+import { useReducer } from 'react';
+import { ListContent } from "./ListContent";
+import { ListHead } from "./ListHead";
+import { Context, initState, type Item, type State } from './Context';
+const reducer = ( state: State, action: Action ): State  => {
+  const { type, payload } = action;
+  switch( type ){
+    case 'add': return {
+      ...state,
+      title: '',
+      list: [ ...state.list, { id: Date.now(), title: payload.title }]
+    }
+    case 'remove': return {
+      title: '',
+      list: state.list.filter( item => item.id != payload.id )
+    }
+    case 'input': return {
+      ...state,
+      title: payload.title,
+    }
+    default: return state;
+  }
+}
+export const ContextReducer = () => {
+  const [ state, dispatch ] = useReducer( reducer, initState );
+  return (
+    <Context.Provider value={{ state, dispatch }}>
+      <ListHead></ListHead>
+      <ListContent></ListContent>
+    </Context.Provider>
+  );
+}
+```
+
+**使用作用域状态和方法**：在子组件中通过 useContext 钩子函数获取作用状态和方法。
+
+```tsx
+// ./ListHead/index.tsx
+import { useRef, useContext, type ChangeEvent } from 'react';
+import { Context } from '../Context';
+export const ListHead = () => {
+  const inputRef = useRef<OrNull<HTMLInputElement>>( null );
+  const { state: { title='' }, dispatch=()=>{} } = useContext( Context );
+  const add = () => dispatch({ 
+    type: 'add', 
+    payload: { title } 
+  });
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    dispatch({
+      type: 'input',
+      payload: {
+        title: e.target.value
+      }
+    })
+  }
+  return (
+    <>
+      <input
+        type="text"
+        onChange={(e) => handleChange(e)}
+        value={title}
+        ref={inputRef}
+      />
+      <button onClick={add}>add</button>
+    </>
+  )
+}
+```
+
+```tsx
+// ./ListContent/index.tsx
+import { useContext } from "react";
+import { Context, type Item } from "../Context";
+export const ListContent = () => {
+  const { state: { list=[] }, dispatch=()=>{} } = useContext( Context );
+  const remove = (id: Item['id']) => dispatch({
+    type: 'remove', 
+    payload: { id }
+  });
+  const eidt = (id: Item['id']) => {
+    const item = list.find( item => item.id == id );
+  }
+  return (
+    <ul>
+      {
+        list.map( item => {
+          return <li key={ item.id }>
+            { item.title } 
+            <button onClick={ () => eidt( item.id ) }>编辑</button>
+            <button onClick={ () => remove( item.id ) }>删除</button>
+          </li>
+        })
+      }
+    </ul>
+  )
+}
+```
+
+### 11.10 useMemo
+
+​	`useMemo` 是一个 React Hook，它在每次重新渲染的时候能够缓存计算的结果。有以下几种应用场景：
+
+- [跳过代价昂贵的重新计算](https://react.docschina.org/reference/react/useMemo#skipping-expensive-recalculations)
+- [跳过组件的重新渲染](https://react.docschina.org/reference/react/useMemo#skipping-re-rendering-of-components)
+- [记忆另一个 Hook 的依赖](https://react.docschina.org/reference/react/useMemo#memoizing-a-dependency-of-another-hook)
+- [记忆一个函数](https://react.docschina.org/reference/react/useMemo#memoizing-a-function)
+
+
+
+
+
