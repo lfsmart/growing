@@ -851,3 +851,93 @@ export const UseInsertionEffect = () => {
 }
 ```
 
+### 11.7 useReducer
+
+​	使用 reducer 统一处理业务逻辑，使业务与视图分离，以便后期维护。如下所示：
+
+```tsx
+import { useRef, ChangeEvent, useReducer } from "react";
+type Item = {
+  id: number;
+  title: string;
+}
+type State = {
+  list: Item[];
+  title: string;
+}
+const listenReducer = ( state: State , action: Action ): State  => {
+  const { type, payload } = action;
+  switch( type ){
+    case 'add': return {
+      ...state,
+      title: '',
+      list: [ ...state.list, { id: Date.now(), title: payload.title }]
+    }
+    case 'remove': return {
+      title: '',
+      list: state.list.filter( item => item.id != payload.id )
+    }
+    case 'input': return {
+      ...state,
+      title: payload.title,
+    }
+    default: return state;
+  }
+}
+export const UseReducer = () => {
+  const inputRef = useRef<OrNull<HTMLInputElement>>( null );
+  const [{ title, list }, listDispatch ] = useReducer(listenReducer, {
+    title: '', 
+    list: [{
+      id: 1, title: 'aaa'
+    }]
+  });
+  const add = () => listDispatch({ 
+    type: 'add', 
+    payload: { title } 
+  });
+  const remove = (id: Item['id']) => listDispatch({ 
+    type: 'remove', 
+    payload: { id }
+  });
+  const eidt = (id: Item['id']) => {
+    const item = list.find( item => item.id == id );
+    if( item ){
+      inputRef.current?.focus();
+    }else {
+      throw Error( 'paramer is wrong' );
+    }
+  }
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    listDispatch({
+      type: 'input',
+      payload: {
+        title: e.target.value
+      }
+    })
+  }
+  return (
+    <>
+      <input type="text" 
+          onChange={ (e) => handleChange(e) } 
+          value={ title } 
+          ref={ inputRef }/>
+      <button onClick={ add }>add</button>
+      <ul>
+        {
+          list.map( item => {
+            return <li key={ item.id }>
+              { item.title } 
+              <button onClick={ () => eidt( item.id ) }>编辑</button>
+              <button onClick={ () => remove( item.id ) }>删除</button>
+            </li>
+          })
+        }
+      </ul>
+    </>
+  )
+}
+```
+
+​	为了提高性能可以使用 use-immer 库，优化每次 render 变量重新创建的性能。因为每次 render 函数组件内部的方法也会被重新创建，建议使用 useCallback 对组件内部的函数进行优化。
+

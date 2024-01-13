@@ -10,3 +10,11 @@ declare interface Json extends object {
 declare type OrNull<T> = T | null;
 
 declare type OrUndef<T> = T | undefined;
+
+interface Action<T=any> {  
+  type: string;
+  payload: T;  
+}
+
+
+
