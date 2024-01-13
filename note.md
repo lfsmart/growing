@@ -836,4 +836,18 @@ const Chat = ({ title, theme }: { title: string, theme: string }) => {
 
 ### 11.6 useInsertionEffect 
 
-​	`useInsertionEffect` 是为 CSS-in-JS 库的作者特意打造的。除非你正在使用 CSS-in-JS 库并且需要注入样式，否则你应该使用 [`useEffect`](https://react.docschina.org/reference/react/useEffect) 或者 [`useLayoutEffect`](https://react.docschina.org/reference/react/useLayoutEffect)。`useInsertionEffect` 可以在布局副作用触发之前将元素插入到 DOM 中。
+​	`useInsertionEffect` 是为 CSS-in-JS 库的作者特意打造的。除非你正在使用 CSS-in-JS 库并且需要注入样式，否则你应该使用 [`useEffect`](https://react.docschina.org/reference/react/useEffect) 或者 [`useLayoutEffect`](https://react.docschina.org/reference/react/useLayoutEffect)。`useInsertionEffect` 可以在布局副作用触发之前将元素插入到 DOM 中，此钩子如法获取原生 dom。
+
+```tsx
+export const UseInsertionEffect = () => {
+  const ref = useRef( null );
+  useInsertionEffect( () => {
+    // 无法获取 dom
+    console.log( 'useInsertionEffect:', ref );
+  })
+  return (
+    <div ref={ ref }></div> 
+  )
+}
+```
+
