@@ -941,3 +941,40 @@ export const UseReducer = () => {
 
 ​	为了提高性能可以使用 use-immer 库，优化每次 render 变量重新创建的性能。因为每次 render 函数组件内部的方法也会被重新创建，建议使用 useCallback 对组件内部的函数进行优化。
 
+### 11.8 createContext/useContext
+
+​	是一种跨组件通信的方式，在组件外部定义 context 上下文通过 `createContext` 创建 context 上下文。通过作用域内置组件 `Context.Provider` 挂载数据，在子组件中通过 `useContext` 获取 context 上下文数据，实现组件之间的通信。
+
+```tsx
+import { useRef, ChangeEvent, useReducer, createContext, useContext } from "react";
+const Context = createContext<OrNull<number>>(null);
+const Title = () => {
+  const value = useContext( Context );
+  return (
+    <div>
+      hello, Title, { value }
+    </div>
+  )
+}
+const Head = () => {
+  const value = useContext( Context );
+  return (
+    <div>
+      hello Head, { value }
+      <Title></Title>
+    </div>
+  ) 
+}
+export const UseContext = () => {
+  return (
+    <>
+    <Context.Provider value={123}>
+      <div> hello App</div>
+      <Head></Head>
+    </Context.Provider>
+    </>
+  )
+}
+
+```
+

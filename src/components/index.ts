@@ -4,6 +4,7 @@ import { UseEffect } from './UseEffect'
 import { UseLayoutEffect } from './UseLayoutEffect'
 import { UseInsertionEffect } from './UseInsertionEffect'
 import { UseReducer } from './UseReducer'
+import { UseContext } from './UseContext'
 
 export {
   UseRef,
@@ -11,5 +12,6 @@ export {
   UseEffect,
   UseLayoutEffect,
   UseInsertionEffect,
-  UseReducer
+  UseReducer,
+  UseContext
 }
