@@ -6,6 +6,8 @@ import { UseInsertionEffect } from './UseInsertionEffect'
 import { UseReducer } from './UseReducer'
 import { UseContext } from './UseContext'
 import { ContextReducer } from './ContextReducer'
+import { Memo } from './Memo'
+import { UseMemo } from './UseMemo'
 
 export {
   UseRef,
@@ -15,5 +17,7 @@ export {
   UseInsertionEffect,
   UseReducer,
   UseContext,
-  ContextReducer
+  ContextReducer,
+  Memo,
+  UseMemo,
 }

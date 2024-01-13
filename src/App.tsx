@@ -1,5 +1,10 @@
 import { ReactNode } from "react";
-import { UseRef, UseImperativeHandle, UseEffect, UseLayoutEffect, UseInsertionEffect, UseReducer, UseContext, ContextReducer } from '@/components';
+import { 
+  UseRef, UseImperativeHandle, UseEffect, UseLayoutEffect, 
+  UseInsertionEffect, UseReducer, UseContext, ContextReducer, 
+  Memo, UseMemo, UseCallback, StartTransition 
+} from '@/components';
+
 function App(): ReactNode {
   return (
     <>
@@ -10,7 +15,11 @@ function App(): ReactNode {
       {/* <UseInsertionEffect></UseInsertionEffect> */}
       {/* <UseReducer></UseReducer> */}
       {/* <UseContext></UseContext> */}
-      <ContextReducer></ContextReducer>
+      {/* <ContextReducer></ContextReducer> */}
+      {/* <Memo></Memo> */}
+      {/* <UseMemo></UseMemo> */}
+      {/* <UseCallback></UseCallback> */}
+      <StartTransition></StartTransition>
     </>
   );
 }

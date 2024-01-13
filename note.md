@@ -1113,16 +1113,152 @@ export const ListContent = () => {
 }
 ```
 
-### 11.10 useMemo
+### 11.10 memo
 
-​	`useMemo` 是一个 React Hook，它在每次重新渲染的时候能够缓存计算的结果。有以下几种应用场景：
+​	`memo` 允许你的组件在 props 没有改变的情况下跳过重新渲染。
+
+- [当 props 没有改变时跳过重新渲染](https://react.docschina.org/reference/react/memo#skipping-re-rendering-when-props-are-unchanged)
+- [使用 state 更新记忆化（memoized）组件](https://react.docschina.org/reference/react/memo#updating-a-memoized-component-using-state)
+- [使用 context 更新记忆化（memoized）组件](https://react.docschina.org/reference/react/memo#updating-a-memoized-component-using-a-context)
+- [最小化 props 的变化](https://react.docschina.org/reference/react/memo#minimizing-props-changes)
+- [指定自定义比较函数](https://react.docschina.org/reference/react/memo#specifying-a-custom-comparison-function)
+
+​	当未使用 memo 时，每次 render 子组件都会被执行，无论是否有状态。在使用 `memo` 之后，只要状态 props 不发生变化，子组件不会执行。不用过多的使用 memo，出现性能问题再着手考虑和使用 `memo` 优化渲染，比较适合无状态组件。如下所示：
+
+```tsx
+import { useState, memo } from "react";
+const Head = memo(() => {
+  return (
+    <div>
+    I am head，{ Math.random() }
+  </div>
+  ) 
+})
+export const UseMemo = () => {
+  const [ count, setCount ] = useState( 0 );
+  const handleClick = () => {
+    setCount( count + 1 );
+  }
+  return (
+    <>
+      hello count, { count }
+      <button onClick={ handleClick }>add</button>
+      <Head></Head>
+    </>
+  );
+}
+```
+
+### 11.11 useMemo
+
+​	`useMemo` 是一个 React Hook，它在每次重新渲染的时候能够缓存计算的结果，缓存的是状态而 `useCallback` 缓存的是状态函数，一个缓存的是状态结果，一个缓存的是状态函数 。
 
 - [跳过代价昂贵的重新计算](https://react.docschina.org/reference/react/useMemo#skipping-expensive-recalculations)
 - [跳过组件的重新渲染](https://react.docschina.org/reference/react/useMemo#skipping-re-rendering-of-components)
 - [记忆另一个 Hook 的依赖](https://react.docschina.org/reference/react/useMemo#memoizing-a-dependency-of-another-hook)
-- [记忆一个函数](https://react.docschina.org/reference/react/useMemo#memoizing-a-function)
+- [记忆一个函数](https://react.docschina.org/reference/react/useMemo#memoizing-a-function) 
 
+​	任意状态发生了改变，Head 组件都会触发 render，这是由于 react 底层采用的是 `Object.is` 的方式做数据比对的，引用类型每次 render 都会被重新创建，因此每次比对的结果都不相等，都会触发新的 render，与 `useCallback` 不同的是，`useCallback` 缓存的是状态函数。如下所示：
 
+```tsx
+import { useState, memo } from "react";
+const Head = memo(({ list }: { list: string[]}) => {
+  return <div> I am head，{ Math.random() } </div>
+}
+export const UseMemo = () => {
+  const [ count, setCount ] = useState( 0 );
+  const [ msg, setMsg ] = useState( 'hello react' );
+  const list = [ msg.toLowerCase(), msg.toUpperCase() ];
+  const handleClick = () => {
+    setCount( count + 1 );
+  }
+  return (
+    <>
+      hello count, { count }
+      <button onClick={ handleClick }>add</button>
+      <Head list={ list }></Head>
+    </>
+  );
+}
+```
 
+​	为了解决这个问题，react 提供的钩子 `useMemo` 函数。如下所示：
 
+```tsx
+import { useState, memo, useMemo } from "react";
+const Head = memo(({ list }: { list: string[]}) => {
+  return <div> I am head，{ Math.random() } </div>
+})
+export const UseMemo = () => {
+  const [ count, setCount ] = useState( 0 );
+  const [ msg, setMsg ] = useState( 'hello react' );
+  // 使用 useMemo 定义数据
+  const list = useMemo( () => [ msg.toLowerCase(), msg.toUpperCase() ], [ msg ]);
+  const handleClick = () => {
+    setCount( count + 1 );
+  }
+  return (
+    <>
+      hello count, { count }
+      <button onClick={ handleClick }>add</button>
+      <Head list={ list }></Head>
+    </>
+  )
+}
+```
+
+### 11.12 useCallback
+
+​	`useCallback` 是一个允许你在多次渲染中缓存函数的 React Hook。由于状态发生改变就会触发 render，函数组件中的变量和方法都会被重新创建，影响性能。`useCallback` 就是为了解决函数重复被创建的问题，缓存的是函数而 `useMemo` 缓存的是计算状态。
+
+```tsx
+import { useState, memo, useMemo, useCallback } from "react";
+const Head = memo(({ fn }: { fn: VoidFunction }) => {
+  return <div> I am head，{ Math.random() } </div>
+})
+export const UseCallback = () => {
+  const [ count, setCount ] = useState( 0 );
+  const handleClick = () => {
+    setCount( count + 1 );
+  }
+  const fn = useCallback(() => {
+    console.log( 1 );
+  }, [])
+  return (
+    <>
+      hello count, { count }
+      <button onClick={ handleClick }>add</button>
+      <Head fn={ fn }></Head>
+    </>
+  );
+}
+```
+
+​	`useCallback` 是 `useMemo` 的一个特例的简写形式。使用 `useMemo` 是也可以实现缓存函数的功能，只要在回调函数中返回状态改成函数即可，如下所示：
+
+```tsx
+import { useState, memo, useMemo, useCallback } from "react";
+const Head = memo(({ fn }: { fn: VoidFunction }) => <div> I am head，{ Math.random() } </div> )
+export const UseCallback = () => {
+  const [ count, setCount ] = useState( 0 );
+  const handleClick = () => {
+    setCount( count + 1 );
+  }
+  const fn = useCallback(() => {
+    console.log( 1 );
+  }, [])
+  /*
+  	const fn = useMemo( () => () => {
+     	console.log( msg );
+  	}, [])
+  */
+  return (
+    <>
+      hello count, { count }
+      <button onClick={ handleClick }>add</button>
+      <Head fn={ fn }></Head>
+    </>
+  );
+}
+```
 
