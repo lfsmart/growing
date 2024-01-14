@@ -8,6 +8,10 @@ import { UseContext } from './UseContext'
 import { ContextReducer } from './ContextReducer'
 import { Memo } from './Memo'
 import { UseMemo } from './UseMemo'
+import { UseCallback } from './UseCallback'
+import { StartTransition } from './StartTransition'
+import { UseTransition } from './UseTransition'
+import { UseDeferredValue } from './UseDeferredValue'
 
 export {
   UseRef,
@@ -20,4 +24,8 @@ export {
   ContextReducer,
   Memo,
   UseMemo,
+  UseCallback,
+  StartTransition,
+  UseTransition,
+  UseDeferredValue
 }

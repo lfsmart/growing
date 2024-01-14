@@ -2,7 +2,8 @@ import { ReactNode } from "react";
 import { 
   UseRef, UseImperativeHandle, UseEffect, UseLayoutEffect, 
   UseInsertionEffect, UseReducer, UseContext, ContextReducer, 
-  Memo, UseMemo, UseCallback, StartTransition 
+  Memo, UseMemo, UseCallback, StartTransition, UseTransition,
+  UseDeferredValue 
 } from '@/components';
 
 function App(): ReactNode {
@@ -19,7 +20,9 @@ function App(): ReactNode {
       {/* <Memo></Memo> */}
       {/* <UseMemo></UseMemo> */}
       {/* <UseCallback></UseCallback> */}
-      <StartTransition></StartTransition>
+      {/* <StartTransition></StartTransition> */}
+      {/* <UseTransition></UseTransition> */}
+      <UseDeferredValue></UseDeferredValue>
     </>
   );
 }

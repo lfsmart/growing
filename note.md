@@ -1262,3 +1262,99 @@ export const UseCallback = () => {
 }
 ```
 
+### 11.13 startTransition
+
+​	`startTransition` 可以让你在不阻塞 UI 的情况下更新 state。如下例子，在输入时动态标记输入的内容对应字符为红色的列表，由于列表数据较多，在输入的时候会出现明显的卡顿，为了更好的体验，将耗时的渲染放入 startTransition 函数中，让其不对其他渲染阻塞。
+
+```tsx
+import { useState, startTransition, type ChangeEvent,type ReactNode } from "react";
+const List = ({ query }: { query: string }) => {
+  const word = 'hello word';
+  let items: ReactNode[] = []
+  if( query!=='' && word.includes( query ) ){
+    const [a,b] = word.split( query );
+    items = Array.from({ length: 10000 }, (item,i)=><li key={i}>{a}<span style={{color:'red'}}>{query}</span>{ b}</li> )
+  }else {
+    items = Array.from({ length: 10000 }, ( item, i ) => <li key={i}>{word}</li> )
+  }
+  return <>
+    <ul>{ items }</ul>
+  </>
+}
+export const UseTransition = () => {
+  const [ search, setSearch ] = useState( '' );
+  const [ query, setQuery ] = useState<string>( '');
+  const handleChange = (e: ChangeEvent<HTMLInputElement> ) => {
+    setSearch( e.target.value );
+    startTransition( () => {
+      setQuery( e.target.value );
+    })
+  }
+  return (
+    <>
+      <input type="text" value={ search } onChange={ handleChange }/>
+      <List query={ query }></List>
+    </>
+  );
+}
+```
+
+### 11.14 useTransition & useDeferedValue
+
+​	`useTransition` 是一个帮助你在不阻塞 UI 的情况下更新状态的 React Hook。是 `startTransition` 方法的钩子版本，使用方法基本一致。useTransition 钩子函数提供了等待状态，用于 loading 效果。
+
+```tsx
+export const UseTransition = () => {
+  const [ search, setSearch ] = useState( '' );
+  const [ query, setQuery ] = useState<string>( '');
+  const [ isPending, startTransition ] = useTransition(); // 使用钩子
+  const handleChange = (e: ChangeEvent<HTMLInputElement> ) => {
+    setSearch( e.target.value );
+    startTransition( () => {
+      setQuery( e.target.value );
+    })
+  }
+  return (
+    <>
+      <input type="text" value={ search } onChange={ handleChange }/>
+      { isPending ? <div>loading</div> : <List query={ query }></List> }
+    </>
+  )
+}
+```
+
+### 11.5 useDeferedValue
+
+​	`useDeferedValue` 是一个 React Hook，可以让你延迟更新 UI 的某些部分。useDeferedValue(value)，value 参数是延时执行的组件的依赖状态。
+
+```tsx
+import { useState, memo, useMemo, useDeferredValue, useTransition, Suspense, type ChangeEvent, type ReactNode } from "react";
+const List = ({ query }: { query: string }) => {
+  const word = 'hello word';
+  let items: ReactNode[] = []
+  if( query!=='' && word.includes( query ) ){
+    const [a,b] = word.split(query);
+    items = Array.from({length:10000},(item,i) =><li key={i}>{a}<span style={{color:'red'}}>{query}</span>{b}</li>)
+  }else {
+    items = Array.from({ length: 10000 }, ( item, i ) => <li key={i}>{word}</li> )
+  }
+  return <>
+    <ul>{ items }</ul>
+  </>
+}
+export const UseDeferredValue = () => {
+  const [ search, setSearch ] = useState( '' );
+  const query = useDeferredValue( search );
+  const handleChange = (e: ChangeEvent<HTMLInputElement> ) => {
+    setSearch( e.target.value );
+  }
+  return (
+    <>
+      <input type="text" value={ search } onChange={ handleChange }/>
+      <List query={ query }></List>
+    </>
+  )
+}
+```
+
+### 
