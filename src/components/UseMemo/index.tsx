@@ -1,7 +1,7 @@
 import { useState, memo, useMemo } from "react";
 
 
-const Head = memo(({ list }: { list: string[]}) => {
+const Head = memo(({ count }: { count: number }) => {
   return (
     <div>
     I am head，{ Math.random() }
@@ -15,13 +15,18 @@ export const UseMemo = () => {
   const [ msg, setMsg ] = useState( 'hello react' );
   const list = useMemo( () => [ msg.toLowerCase(), msg.toUpperCase() ], [ msg ]);
   const handleClick = () => {
-    setCount( count + 1 );
+    if( count == 3 ){
+      setCount( 3 )
+    }else {
+      setCount( count + 1 );
+
+    }
   }
   return (
     <>
       hello count, { count }
       <button onClick={ handleClick }>add</button>
-      <Head list={ list }></Head>
+      <Head count={ count }></Head>
     </>
   );
 };

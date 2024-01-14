@@ -12,6 +12,7 @@ import { UseCallback } from './UseCallback'
 import { StartTransition } from './StartTransition'
 import { UseTransition } from './UseTransition'
 import { UseDeferredValue } from './UseDeferredValue'
+import { UseId } from './UseId'
 
 export {
   UseRef,
@@ -27,5 +28,6 @@ export {
   UseCallback,
   StartTransition,
   UseTransition,
-  UseDeferredValue
+  UseDeferredValue,
+  UseId
 }

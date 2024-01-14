@@ -92,9 +92,9 @@ function App() {
       
   }
   const handleClick2 = () => {
-      return (e:) => {
-          
-      }
+    return (e:) => {
+        
+    }
   }
   return (
     <div className="card">
@@ -536,7 +536,7 @@ export default App;
 
 ### 11.1 useRef 
 
-​	useRef 的功能： 第一，保存变量。第二，绑定 dom 通过 ref 属性。用 ref 引用一个值做记忆功能，ref 定义的变量类似于在 constructor 函数中定义的变量。可以通过 react 中的钩子函数 `useRef` 存储数据状态，使用 useRef 定义的数据不会导致视图的更新和函数的再次 render。仅用于变量的存储，并记录上一次的值，也就是不会受到函数组件 render 的影响，类似于函数组件外部定义的全局变量，需要通过 current 取到变量值。
+​	useRef 的功能： 第一，保存变量。第二，通过 ref 属性绑定 dom 。用 ref 引用一个值做记忆功能，ref 定义的变量类似于在 constructor 函数中定义的变量。可以通过 react 中的钩子函数 `useRef` 存储数据状态，使用 useRef 定义的数据不会导致视图的更新和函数的再次 render。仅用于变量的存储，并记录上一次的值，也就是不会受到函数组件 render 的影响，类似于函数组件外部定义的全局变量，需要通过 current 获取变量值。
 
 ```tsx
 // class 组件
@@ -1299,7 +1299,7 @@ export const UseTransition = () => {
 }
 ```
 
-### 11.14 useTransition & useDeferedValue
+### 11.14 useTransition
 
 ​	`useTransition` 是一个帮助你在不阻塞 UI 的情况下更新状态的 React Hook。是 `startTransition` 方法的钩子版本，使用方法基本一致。useTransition 钩子函数提供了等待状态，用于 loading 效果。
 
@@ -1323,7 +1323,7 @@ export const UseTransition = () => {
 }
 ```
 
-### 11.5 useDeferedValue
+### 11.15 useDeferedValue
 
 ​	`useDeferedValue` 是一个 React Hook，可以让你延迟更新 UI 的某些部分。useDeferedValue(value)，value 参数是延时执行的组件的依赖状态。
 
@@ -1357,4 +1357,56 @@ export const UseDeferredValue = () => {
 }
 ```
 
-### 
+### 11.16 useId
+
+​	`useId` 是一个 React Hook，可以生成传递给无障碍属性的唯一 ID。
+
+```tsx
+import { useId } from "react";
+const Password = () => {
+  const password = useId();
+  return <>
+    <label>密码：<input type="password" aria-describedby={ password } />
+    </label>
+    <p id={ password }>密码应该包含至少 18 个字符</p>
+  </>
+}
+export const UseId = () => {
+  return (
+    <>
+      <Password />
+      <Password />
+    </>
+  );
+}
+```
+
+​	另外，可以通过 `ReactDOM.createRoot` 方法配置 useId 的前缀。格式：“:react-r1: ” [参考链接](https://react.docschina.org/reference/react-dom/client/createRoot)。
+
+```tsx
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.tsx'
+ReactDOM.createRoot(
+  document.getElementById('root')!, 
+  { 
+    identifierPrefix: 'react-'
+  }
+).render(
+  <App />
+);
+```
+
+### 11.17 useDebugValue & useSyncExternalStore
+
+- [useDebugValue](https://react.docschina.org/reference/react/useDebugValue) 
+- [useSyncExternalStore](https://react.docschina.org/reference/react/useSyncExternalStore)
+
+## 12. react 组件的封装
+
+```bash
+npm i -S antd # @5.13.x
+npm i -S @ant-design/icons # @5.2.6
+```
+
+[antd官网](https://ant-design.antgroup.com/components/overview-cn?from=msidevs.net)

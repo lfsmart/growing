@@ -1,7 +1,7 @@
 import { useState, memo } from "react";
 
 
-const Head = memo(() => {
+const Head = memo(({ count }: { count?: number }) => {
   return (
     <div>
     I am head，{ Math.random() }
