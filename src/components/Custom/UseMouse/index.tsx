@@ -7,5 +7,4 @@ export const UseMouse = () => {
     <div>pageX: { pageX }px </div>
     <div>pageY: { pageY }px </div>
   </>
-
 }

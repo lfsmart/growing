@@ -1449,3 +1449,16 @@ export const UseMouse = () => {
 }
 ```
 
+## 14. 第三方 hook
+
+​	第三方 hook 有：`ahook`、`react-use` 等。ahook 是一套高质量可靠的 react Hooks 库，在当前 React 项目研发过程中，一套好用的 React hooks 库是必不可少的。
+
+```bash
+npm i -S ahooks
+```
+
+### 14.1 useRequest
+
+​	默认立即执行，并返回结果，useRequest 仅是对异步请求结果的封装处理，异步请求依然需要使用 axios 等库。如果手动执行，需要配置可选参数 `{manual:true}`
+
+ [ahooks](https://ahooks.gitee.io/zh-CN/hooks/use-request/index) 
