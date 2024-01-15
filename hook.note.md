@@ -1651,3 +1651,73 @@ export const Profiler = () => {
 ### 15.6 hyrateRoot
 
 ​	`hydrateRoot` 函数允许你在先前由 [`react-dom/server`](https://react.docschina.org/reference/react-dom/server) 生成的浏览器 HTML DOM 节点中展示 React 组件。
+
+## 16. CSS-in-JS
+
+​	CSS-in-JS 解决方案给我们提供了新的编写 CSS 的方式。这些方案使用以 Javascript 为基础的 API 来创建和编写样式。
+
+​	优点：动态样式、元素作用域、自定义主题、支持 SSR、方便单元测试等。[styled-components](https://styled-components.com/docs/basics#installation)。
+
+```bash
+npm i -S styled-components
+```
+
+## 17. TailwindCSS
+
+​	只书写 HTML 代码，无需书写 CSS，即可快速构建美观的网站，Taiwind 框架利用 CSS 原子化思想实现的。
+
+​	优点：统一的风格，构建体积很小，具备响应式的一切，组件驱动等。 [TailwindCSS](https://tailwindcss.com/docs/guides/vite#react)
+
+```bash
+npm install -D tailwindcss postcss autoprefixer
+```
+
+​	依赖安装完成后，执行如下命令，生成 `tailwind.config.js` 和 `postcss.config.js` 两个配置文件。
+
+```bash
+npx tailwindcss init -p
+```
+
+​	按照官方文档修改默认配置文件。
+
+```javascript
+// tailwind.config.js
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    // 在 tailwind.config.js 文件中添加所有模板文件的路径。
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
+
+​	在 src 文件夹下创建 index.css 文件，并填写默认内容。vscode 默认不支持 css 文件中的 @ 语法，在 vscode 的 setting 配置文件中配置`"css.lint.unknownAtRules": "ignore"` 即可。
+
+```css
+/* ./index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+​	然后，将 index.css 在入口文件中引入。
+
+```tsx
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.tsx'
+import './index.css' // 导入全局 CSS
+ReactDOM.createRoot(document.getElementById('root')!, { 
+  identifierPrefix: 'react-',
+  onRecoverableError(...args){
+    console.log( args )
+  }
+}).render( <App /> )
+```
+
+​	另外，在 vscode 安装插件 `Tailwind CSS IntelliSense` 在书写样式的时候可以提示。

@@ -19,6 +19,7 @@ import { ReactErrorBoundary } from './ErrorBoundary';
 import { Lazy } from './Lazy';
 import { CreatePortal } from './CreatePortal';
 import { Profiler } from './Profiler';
+import { Tailwind } from './Tailwind';
 
 export {
   UseRef,
@@ -42,4 +43,5 @@ export {
   Lazy,
   CreatePortal,
   Profiler,
+  Tailwind
 }

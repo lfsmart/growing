@@ -4,7 +4,7 @@ import {
   UseInsertionEffect, UseReducer, UseContext, ContextReducer, 
   Memo, UseMemo, UseCallback, StartTransition, UseTransition,
   UseDeferredValue, UseId, Custom, FlushSync, ReactErrorBoundary,
-  Lazy, CreatePortal,Profiler
+  Lazy, CreatePortal, Profiler, Tailwind
 } from '@/components';
 
 function App(): ReactNode {
@@ -30,7 +30,8 @@ function App(): ReactNode {
       {/* <ReactErrorBoundary></ReactErrorBoundary> */}
       {/* <Lazy></Lazy> */}
       {/* <CreatePortal></CreatePortal> */}
-      <Profiler></Profiler>
+      {/* <Profiler></Profiler> */}
+      <Tailwind></Tailwind>
     </>
   );
 }
