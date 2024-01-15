@@ -1542,9 +1542,31 @@ export const FlushSync = () => {
 
 ### 15.2 error boundary
 
-​	默认情况下，如果您的应用程序在渲染错误时抛出错误，React 将从屏幕上移除 UI。为了防止这种情况，您可以将 UI 的一部分包装到错误边界中。错误边界是一种特殊的组件，可以让您显示一些后背的 UI 而不是崩溃的部分，如错误信息等。
+​	默认情况下，如果您的应用程序在渲染错误时抛出错误，React 将从屏幕上移除 UI。为了防止这种情况，您可以将 UI 的一部分包装到错误边界中。错误边界是一种特殊的组件，可以让您显示一些后背的 UI 而不是崩溃的部分，如错误信息等，采用第三方支持。[react-error-boundar](https://www.npmjs.com/package/react-error-boundary) 。
 
+```bash
+npm i -S react-error-boundary
 ```
 
+​	自定义错误信息，并且不影响
+
+```tsx
+import { useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+export const Head = () => {
+  const [ count, setCount ] = useState( 0 );
+  throw new Error( 'wrong!' )
+  return <div> hello Head, { count }</div>
+}
+export const ReactErrorBoundary = () => {
+  return (
+    <ErrorBoundary fallback={ <div>render is wrong!</div> }>
+      <Head></Head>
+    </ErrorBoundary>
+  );
+}
 ```
 
+### 15.3 lazy
+
+​	`lazy` 能够让你在组件第一次被渲染之前延迟加载组件的代码。

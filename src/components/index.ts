@@ -15,6 +15,7 @@ import { UseDeferredValue } from './UseDeferredValue'
 import { UseId } from './UseId'
 import * as Custom from './Custom';
 import { FlushSync } from './FlushSync';
+import { ReactErrorBoundary } from './ErrorBoundary';
 
 export {
   UseRef,
@@ -33,5 +34,6 @@ export {
   UseDeferredValue,
   UseId,
   Custom,
-  FlushSync
+  FlushSync,
+  ReactErrorBoundary,
 }
