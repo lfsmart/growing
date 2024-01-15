@@ -13,6 +13,7 @@ import { StartTransition } from './StartTransition'
 import { UseTransition } from './UseTransition'
 import { UseDeferredValue } from './UseDeferredValue'
 import { UseId } from './UseId'
+import * as Custom from './Custom';
 
 export {
   UseRef,
@@ -29,5 +30,6 @@ export {
   StartTransition,
   UseTransition,
   UseDeferredValue,
-  UseId
+  UseId,
+  Custom
 }

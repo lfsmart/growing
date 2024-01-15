@@ -1410,3 +1410,42 @@ npm i -S @ant-design/icons # @5.2.6
 ```
 
 [antd官网](https://ant-design.antgroup.com/components/overview-cn?from=msidevs.net)
+
+## 13. 自定义 hook
+
+​	自定义实现获取鼠标移动坐标。如下所示：
+
+```jsx
+import { useEffect, useState } from "react"
+export const useMouse = () => {
+  const [ state, setSate ] = useState({
+    pageX: 0,
+    pageY: 0
+  });
+  useEffect( () => {
+    const move = (e: MouseEvent) => {
+      setSate({
+        pageX: e.pageX,
+        pageY: e.pageY
+      })
+    }
+    document.addEventListener( 'mousemove', move, false );
+    return () => document.removeEventListener( 'mousemove', move );
+  }, []);
+  return state;
+}
+```
+
+​	在组件中使用自定义 hook，与其他内置钩子一样，可以直接使用，自定义钩子也就是通过 react 内置的钩子函数对一些特定功能的逻辑函数式封装，也及时带有 react 钩子的函数式编程。
+
+```tsx
+import { useMouse } from "@/hooks"
+export const UseMouse = () => {
+  const { pageX, pageY } = useMouse();
+  return <>
+    <div>pageX: { pageX }px </div>
+    <div>pageY: { pageY }px </div>
+  </>
+}
+```
+

@@ -3,7 +3,7 @@ import {
   UseRef, UseImperativeHandle, UseEffect, UseLayoutEffect, 
   UseInsertionEffect, UseReducer, UseContext, ContextReducer, 
   Memo, UseMemo, UseCallback, StartTransition, UseTransition,
-  UseDeferredValue, UseId 
+  UseDeferredValue, UseId, Custom 
 } from '@/components';
 
 function App(): ReactNode {
@@ -18,12 +18,13 @@ function App(): ReactNode {
       {/* <UseContext></UseContext> */}
       {/* <ContextReducer></ContextReducer> */}
       {/* <Memo></Memo> */}
-      <UseMemo></UseMemo>
+      {/* <UseMemo></UseMemo> */}
       {/* <UseCallback></UseCallback> */}
       {/* <StartTransition></StartTransition> */}
       {/* <UseTransition></UseTransition> */}
       {/* <UseDeferredValue></UseDeferredValue> */}
       {/* <UseId></UseId> */}
+      <Custom.UseMouse></Custom.UseMouse>
     </>
   );
 }
