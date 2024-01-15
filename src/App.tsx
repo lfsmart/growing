@@ -4,7 +4,7 @@ import {
   UseInsertionEffect, UseReducer, UseContext, ContextReducer, 
   Memo, UseMemo, UseCallback, StartTransition, UseTransition,
   UseDeferredValue, UseId, Custom, FlushSync, ReactErrorBoundary,
-  Lazy, 
+  Lazy, CreatePortal,Profiler
 } from '@/components';
 
 function App(): ReactNode {
@@ -28,7 +28,9 @@ function App(): ReactNode {
       {/* <Custom.UseMouse></Custom.UseMouse> */}
       {/* <FlushSync></FlushSync> */}
       {/* <ReactErrorBoundary></ReactErrorBoundary> */}
-      <Lazy></Lazy>
+      {/* <Lazy></Lazy> */}
+      {/* <CreatePortal></CreatePortal> */}
+      <Profiler></Profiler>
     </>
   );
 }

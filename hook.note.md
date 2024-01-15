@@ -1603,4 +1603,51 @@ export const Lazy = () => {
 }
 ```
 
- 
+###  15.4 createPortal
+
+​	`createPortal` 允许你将 JSX 作为 children 渲染至 DOM 的不同部分，将组件渲染到指定的 DOM 容器中。
+
+```tsx
+import { createPortal } from "react-dom"
+export const CreatePortal = () => {
+  return <>
+    { createPortal(<p>我是 createPortal </p>, document.querySelector('#root')! ) }
+  </>
+}
+```
+
+### 15.5 Profiler
+
+​	`<Profiler id='' onRender={}>` 允许你编程式测量 React 树的渲染性能。
+
+```tsx
+import { Profiler as ReactProfiler, useState } from 'react'
+const Head = ({ count }: { count: number }) => {
+  return <div>
+    hello Head, { count }
+  </div>
+}
+export const Profiler = () => {
+  const [ count, setCount ] = useState( 0 );
+  const handleClick = () => {
+    setCount( count + 1 );
+  }
+  const onRender = (id: string, phase: string, actualDuration: number, baseDuration: number, startTime: number, commitTime: number) => {
+    console.log({ 
+      id, phase, actualDuration, 
+      baseDuration, startTime, commitTime,
+    });
+  }
+  return <div>
+    hello Profiler, { count }
+    <button onClick={ handleClick }>click me!</button>
+    <ReactProfiler id="Profiler" onRender={ onRender }>
+      <Head count={ count }></Head>
+    </ReactProfiler>
+  </div>
+}
+```
+
+### 15.6 hyrateRoot
+
+​	`hydrateRoot` 函数允许你在先前由 [`react-dom/server`](https://react.docschina.org/reference/react-dom/server) 生成的浏览器 HTML DOM 节点中展示 React 组件。

@@ -17,6 +17,8 @@ import * as Custom from './Custom';
 import { FlushSync } from './FlushSync';
 import { ReactErrorBoundary } from './ErrorBoundary';
 import { Lazy } from './Lazy';
+import { CreatePortal } from './CreatePortal';
+import { Profiler } from './Profiler';
 
 export {
   UseRef,
@@ -37,5 +39,7 @@ export {
   Custom,
   FlushSync,
   ReactErrorBoundary,
-  Lazy
+  Lazy,
+  CreatePortal,
+  Profiler,
 }
