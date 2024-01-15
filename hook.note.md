@@ -1569,4 +1569,38 @@ export const ReactErrorBoundary = () => {
 
 ### 15.3 lazy
 
-​	`lazy` 能够让你在组件第一次被渲染之前延迟加载组件的代码。
+​	`lazy` 能够让你在组件第一次被渲染之前延迟加载组件的代码。如下所示定义异步加载组件 Header，注意需要使用 default 导出，否则会报错，ts类型检查也会提示使用 default 导出组件。lazy 需要配合 `import('path')` 和 `Suspense` 组件
+
+```tsx
+// ./Header.tsx
+console.log('I am Header component');
+const Header = () => {
+  return <div>hello header, test lazy</div>
+}
+export default Header;
+```
+
+​	使用 lazy 加载组件，需要配合 import 导入组件。另外需要配置内置的异步组件 Suspense 完成组件的异步加载， 否则会报错。
+
+```tsx
+import { lazy, useState, Suspense } from "react";
+const Header = lazy( () => import( './Header.tsx' ) ); // 懒加载
+export const Lazy = () => {
+  const [ show, setShow ] = useState(false);
+  const handleClick = () => {
+    setShow( !show )
+  }
+  return <div>
+    hello lazy,
+    { show && <Suspense fallback={ <span>loading</span> } >
+      <Header />
+      </Suspense> 
+    }
+    <div>
+      <button onClick={ handleClick }>显示/隐藏</button>
+    </div>
+  </div>
+}
+```
+
+ 

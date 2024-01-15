@@ -3,7 +3,8 @@ import {
   UseRef, UseImperativeHandle, UseEffect, UseLayoutEffect, 
   UseInsertionEffect, UseReducer, UseContext, ContextReducer, 
   Memo, UseMemo, UseCallback, StartTransition, UseTransition,
-  UseDeferredValue, UseId, Custom, FlushSync, ReactErrorBoundary 
+  UseDeferredValue, UseId, Custom, FlushSync, ReactErrorBoundary,
+  Lazy, 
 } from '@/components';
 
 function App(): ReactNode {
@@ -26,7 +27,8 @@ function App(): ReactNode {
       {/* <UseId></UseId> */}
       {/* <Custom.UseMouse></Custom.UseMouse> */}
       {/* <FlushSync></FlushSync> */}
-      <ReactErrorBoundary></ReactErrorBoundary>
+      {/* <ReactErrorBoundary></ReactErrorBoundary> */}
+      <Lazy></Lazy>
     </>
   );
 }

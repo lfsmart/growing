@@ -16,6 +16,7 @@ import { UseId } from './UseId'
 import * as Custom from './Custom';
 import { FlushSync } from './FlushSync';
 import { ReactErrorBoundary } from './ErrorBoundary';
+import { Lazy } from './Lazy';
 
 export {
   UseRef,
@@ -36,4 +37,5 @@ export {
   Custom,
   FlushSync,
   ReactErrorBoundary,
+  Lazy
 }
