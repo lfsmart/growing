@@ -20,6 +20,7 @@ import { Lazy } from './Lazy';
 import { CreatePortal } from './CreatePortal';
 import { Profiler } from './Profiler';
 import { Tailwind } from './Tailwind';
+import * as ReactSpring from './ReactSpring';
 
 export {
   UseRef,
@@ -43,5 +44,6 @@ export {
   Lazy,
   CreatePortal,
   Profiler,
-  Tailwind
+  Tailwind,
+  ReactSpring
 }

@@ -1652,7 +1652,7 @@ export const Profiler = () => {
 
 ​	`hydrateRoot` 函数允许你在先前由 [`react-dom/server`](https://react.docschina.org/reference/react-dom/server) 生成的浏览器 HTML DOM 节点中展示 React 组件。
 
-## 16. CSS-in-JS
+## 16. CSS-in-JS (styled-components)
 
 ​	CSS-in-JS 解决方案给我们提供了新的编写 CSS 的方式。这些方案使用以 Javascript 为基础的 API 来创建和编写样式。
 
@@ -1721,3 +1721,54 @@ ReactDOM.createRoot(document.getElementById('root')!, {
 ```
 
 ​	另外，在 vscode 安装插件 `Tailwind CSS IntelliSense` 在书写样式的时候可以提示。
+
+## 18. react-spring 动画库
+
+​	使用自然流畅的动画，将提升 UI 和交互，让应用栩栩如生，[react-spring](https://www.react-spring.dev/docs/getting-started)。安装如下：
+
+```bash
+npm i -S @react-spring/web
+```
+
+​	实现 fadeIn 淡入的动画效果，代码如下所示：
+
+```tsx
+import { ReactNode, useState } from "react";
+import { animated, useSpring } from "@react-spring/web";
+
+export const Animate = ({ isVisible, children }: { isVisible: boolean, children?: ReactNode }) => {
+  const styles = useSpring({
+    opacity: isVisible ? 1 : 0,
+    y: isVisible ? 0 : 24
+  });
+  return <animated.div style={ styles }> { children } </animated.div>
+}
+
+export const FadeIn = () => {
+  const [ isVisible, setVisible ] = useState( true );
+  return (
+    <div>
+      <button onClick={ () => setVisible( !isVisible ) }>显示/隐藏</button>
+      <Animate isVisible={ isVisible }> hi, react-spring</Animate>
+    </div>
+  )
+}
+```
+
+​	另外，可以通过钩子函数拿到动画变化的数据，如下所示：
+
+```tsx
+export const Animate = ({ isVisible, children }: { isVisible: boolean, children?: ReactNode }) => {
+  const styles = useSpring({
+    opacity: isVisible ? 1 : 0,
+    y: isVisible ? 0 : 24
+  });
+  // 获取计算的 y 坐标值
+  return (
+	<animated.div style={ styles }> 
+      { children }
+      <animated.span>{ styles.y.to( val => val ) }</animated.span>
+    </animated.div>
+  ) 
+}
+```
