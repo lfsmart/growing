@@ -1772,3 +1772,11 @@ export const Animate = ({ isVisible, children }: { isVisible: boolean, children?
   ) 
 }
 ```
+
+## 19. antd Charts
+
+​	图标库：[Ant Design Charts](https://ant-design-charts.antgroup.com/)/Recharts/echarts-for-react 按照文档配置即可。
+
+## 20. react-BMapGL
+
+ 百度 react 版的api：[React-BMapGL](https://lbsyun.baidu.com/solutions/reactBmapDoc ) 

@@ -4,7 +4,7 @@ import {
   UseInsertionEffect, UseReducer, UseContext, ContextReducer, 
   Memo, UseMemo, UseCallback, StartTransition, UseTransition,
   UseDeferredValue, UseId, Custom, FlushSync, ReactErrorBoundary,
-  Lazy, CreatePortal, Profiler, Tailwind, ReactSpring
+  Lazy, CreatePortal, Profiler, Tailwind, ReactSpring, Test,
 } from '@/components';
 
 function App(): ReactNode {
@@ -32,7 +32,8 @@ function App(): ReactNode {
       {/* <CreatePortal></CreatePortal> */}
       {/* <Profiler></Profiler> */}
       {/* <Tailwind></Tailwind> */}
-      <ReactSpring.FadeIn></ReactSpring.FadeIn>
+      {/* <ReactSpring.FadeIn></ReactSpring.FadeIn> */}
+      <Test.UpdateItem></Test.UpdateItem>
     </>
   );
 }

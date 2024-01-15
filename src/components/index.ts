@@ -21,6 +21,7 @@ import { CreatePortal } from './CreatePortal';
 import { Profiler } from './Profiler';
 import { Tailwind } from './Tailwind';
 import * as ReactSpring from './ReactSpring';
+import * as Test from './Test';
 
 export {
   UseRef,
@@ -45,5 +46,6 @@ export {
   CreatePortal,
   Profiler,
   Tailwind,
-  ReactSpring
+  ReactSpring,
+  Test
 }
