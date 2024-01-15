@@ -14,6 +14,7 @@ import { UseTransition } from './UseTransition'
 import { UseDeferredValue } from './UseDeferredValue'
 import { UseId } from './UseId'
 import * as Custom from './Custom';
+import { FlushSync } from './FlushSync';
 
 export {
   UseRef,
@@ -31,5 +32,6 @@ export {
   UseTransition,
   UseDeferredValue,
   UseId,
-  Custom
+  Custom,
+  FlushSync
 }

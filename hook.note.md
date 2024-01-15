@@ -1462,3 +1462,89 @@ npm i -S ahooks
 ​	默认立即执行，并返回结果，useRequest 仅是对异步请求结果的封装处理，异步请求依然需要使用 axios 等库。如果手动执行，需要配置可选参数 `{manual:true}`
 
  [ahooks](https://ahooks.gitee.io/zh-CN/hooks/use-request/index) 
+
+## 15. react 高级功能
+
+### 15.1 flushSync
+
+​	`flushSync` 让你强制 react 同步刷新提供的回调中的任何更新，这确保了 DOM 立即更新，通过强制更新DOM, 可以同步获取到状态更新后的 DOM 渲染值， 类似 vue 中的 nextTick 钩子函数。如下所示：
+
+```tsx
+import { useRef, useState } from "react"
+import { flushSync } from 'react-dom'
+export const FlushSync = () => {
+  const [ count, setCount ] = useState(0)
+  const ref = useRef<OrNull<HTMLDivElement>>(null);
+  const handleClick = () => {
+    flushSync( () => {
+      setCount( count + 1 );
+    })
+    console.log( ref.current?.innerHTML );
+  }
+  return (
+    <div>
+      <button onClick={ handleClick }>click me!</button>
+      <div ref={ ref }>count, { count }</div>
+    </div>
+  )
+}
+```
+
+​	多个 useState 执行会同时更新渲染，并且仅 render 一次。如下所示：
+
+```tsx
+import { useRef, useState } from "react"
+import { flushSync } from 'react-dom'
+export const FlushSync = () => {
+  const [ count, setCount ] = useState(0)
+  const [ count2, setCount2 ] = useState(0)
+  const ref = useRef<OrNull<HTMLDivElement>>(null);
+  const handleClick = () => {
+    setCount( count + 1 )
+  	setCount2( count2 + 1)
+  }
+  return (
+    <div>
+      <button onClick={ handleClick }>click me!</button>
+      <div ref={ ref }>count, { count }，{ count2 }</div>
+    </div>
+  )
+}
+```
+
+ 	使用 `flushSync` 阻止 useState 状态批处理功能，状态每次变更都会触发 render 执行。不影响其他未使用 `flushSync` 状态变更批处理，即其他未使用 flushSync 同步状态的，依然批量更新状态，不触发多次 render。 如下所示，`setCount2`，`setCount3` 状态批处理。
+
+```tsx
+import { useRef, useState } from "react"
+import { flushSync } from 'react-dom'
+export const FlushSync = () => {
+  console.log(1);
+  const [ count, setCount ] = useState(0)
+  const [ count2, setCount2 ] = useState(0)
+  const [ count3, setCount3 ] = useState(0)
+  const ref = useRef<OrNull<HTMLDivElement>>(null);
+  const handleClick = () => {
+    flushSync( () => {
+      setCount( count + 1 );
+    })
+    setCount2( count2 + 1 );
+    setCount3( count3 + 1 );
+    console.log( ref.current?.innerHTML );
+  }
+  return (
+    <div>
+      <button onClick={ handleClick }>click me!</button>
+      <div ref={ ref }>count, { count }, { count2 }, { count3 }</div>
+    </div>
+  )
+}
+```
+
+### 15.2 error boundary
+
+​	默认情况下，如果您的应用程序在渲染错误时抛出错误，React 将从屏幕上移除 UI。为了防止这种情况，您可以将 UI 的一部分包装到错误边界中。错误边界是一种特殊的组件，可以让您显示一些后背的 UI 而不是崩溃的部分，如错误信息等。
+
+```
+
+```
+
