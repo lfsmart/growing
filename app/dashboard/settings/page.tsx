@@ -5,5 +5,15 @@ export const metadata: Metadata = {
   description: 'settings pages',
 }
 export default () => {
-  return <h1>Hello, settings Page!</h1>
+  return (
+    <>
+      <h1>Hello, settings Page!</h1>
+      <section style={{ height: 600, background: 'green' }} id="a">
+
+      </section>
+      <section style={{ height: 600, background: 'red' }} id="b">
+
+      </section>
+    </>
+  )
 }

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { PostList } from '@/components';
+import { PostList, Links, Anchor } from '@/components';
 export default () => {
 
   const postData = [
@@ -8,11 +8,14 @@ export default () => {
     { id: 3, slug: 'ccc', title: 'ccc' },
   ]
 
+
   return (
   <>
     <div>Hello,Home Page</div>
     <Link href="/dashboard">GO Dashboard</Link>
     <PostList posts={postData}></PostList>
+    <Links></Links>
+    <Anchor></Anchor>
   </>
   )
 }
