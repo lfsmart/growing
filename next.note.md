@@ -72,7 +72,9 @@ export default ({ children }: { children: React.ReactNode }) => {
 }
 ```
 
-​	按照官网的说明，路由配置约定为 `page/layout/template` 这三种方式，`page` 表示路由页面，`template` 是模版与 `layout` 使用基本一致，但是在根目录中必须使用 `layout` 文件作为布局组件，如果 `template` 和 `layout` 两个文件都存在，页面都会渲染，且根目录的布局组件必须存在，根目录的子页面布局文件可以不存在，只要有 `page` 文件即可。
+​	按照官网的说明，路由配置约定为 `page/layout/template` 这三种方式，`page` 表示路由页面，`template` 是模版与 `layout` 使用基本一致，但是在根目录中必须使用 `layout` 文件作为布局组件，如果 `template` 和 `layout` 两个文件都存在，页面都会渲染，且根目录的布局组件必须存在，根目录的子页面布局文件可以不存在，只要有 `page` 文件即可。page 即为视图渲染的位置也可以理解为 Outlet 占位符渲染的位置。因此如果需要继承的话，需要做在 layout 布局文件中定义需要继承的 UI。
 
 ​	在 next@12.x 版本之前，使用的是 page router 页面路由约定在 pages 文件目录下，如果 App router 与 page router 同时存在则优先渲染 App router 下面的路由。
+
+### 3.2 链接和导航
 
