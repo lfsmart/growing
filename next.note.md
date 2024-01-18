@@ -3,7 +3,7 @@
 ## 1. 安装
 
 ```bash
-npx create-next-app@14.0.4
+npx create-next-app@14.0.4 # 使用的是最新的版本
 ```
 
 ![image-20240117151309991](C:/Users/user/AppData/Roaming/Typora/typora-user-images/image-20240117151309991.png)
@@ -36,6 +36,17 @@ npx create-next-app@14.0.4
 
 ```
 
+### 2.1 顶级文件夹
+
+| [`app`](https://nextjs.org/docs/app/building-your-application/routing) | App Router                 |      |
+| ------------------------------------------------------------ | -------------------------- | ---- |
+| [`pages`](https://nextjs.org/docs/pages/building-your-application/routing) | Pages Router               |      |
+| [`public`](https://nextjs.org/docs/app/building-your-application/optimizing/static-assets) | Static assets to be served |      |
+
+### 2.2 顶级文件
+
+
+
 ## 3. 路由
 
 ### 3.1 路由的约定
@@ -61,4 +72,7 @@ export default ({ children }: { children: React.ReactNode }) => {
 }
 ```
 
-### 3.2 
+​	按照官网的说明，路由配置约定为 `page/layout/template` 这三种方式，`page` 表示路由页面，`template` 是模版与 `layout` 使用基本一致，但是在根目录中必须使用 `layout` 文件作为布局组件，如果 `template` 和 `layout` 两个文件都存在，页面都会渲染，且根目录的布局组件必须存在，根目录的子页面布局文件可以不存在，只要有 `page` 文件即可。
+
+​	在 next@12.x 版本之前，使用的是 page router 页面路由约定在 pages 文件目录下，如果 App router 与 page router 同时存在则优先渲染 App router 下面的路由。
+
