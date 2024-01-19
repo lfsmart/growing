@@ -105,6 +105,42 @@ import { useRouter, redirect, RedirectType } from 'next/navigation'
  redirect( '/dashboard/settings#b', RedirectType.replace ); // RedirectType enum push or replace
 ```
 
+### 3.3 动态路由
+
+​	动态路由，通过 `[id]` 定义目录，在该目录下定义 page 文件即可。
+
+```tsx
+// 类型接口定义
+declare interface Params {
+  [key: string]: string | string[];
+}
+declare interface RouteProps {
+  params: Params,
+  searchParams: URLSearchParams
+}
+```
+
+ 	动态路由页面定义，如下所示：
+
+```tsx
+// 前端和服务端均可以执行
+export default ({ params, searchParams }:  RouteProps) => {
+  return <div>我是 postList 的 id={ params.id }</div>
+}
+```
+
+​	路由参数也可以通过  `'next/navigation'` 模块中的 `useParams` 和 `useSearchParams` 。该钩子只能在客户端执行，因此需要加上客户端指令。
+
+```tsx
+'use client' // 客户端指令
+import { useParams, useSearchParams } from 'next/navigation';
+export default () => {
+  const params = useParams();
+  const searchParams = useSearchParams();
+  return <div>我是 postList 的 id={ params.id }</div>
+}
+```
+
 ## 4. 异步加载
 
 ​	next.js 异步加载与 react@18.x 基本一致。如下所示：
