@@ -137,3 +137,26 @@ export default () => {
 }
 ```
 
+## 5. error 
+
+​	异常报错捕获，在页面路由中配置 error 文件用于捕获异常。可以单独设置也可以在根目录中设置，根目录设置为全局捕获，局部设置的话会覆盖全局设置。
+
+```tsx
+// ./error.js
+'use client'
+import { useEffect } from 'react'
+export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useEffect(() => {
+    console.error(error)
+  }, [error])
+  return (
+    <div>
+      <h2>Something went wrong!</h2>
+      <button onClick={() => reset()}>Try again</button>
+    </div>
+  )
+}
+```
+
+​	模拟异常，在组件中直接通过 `throw new Error( '模拟报错' );` 即可。
+

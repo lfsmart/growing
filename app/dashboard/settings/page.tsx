@@ -7,7 +7,10 @@ import { lazy, Suspense } from 'react'
 //   description: 'settings pages',
 // }
 const AsyncComponent = lazy(() => import('@/components/AsyncComponent'))
+
 export default () => {
+
+  throw new Error( '模拟报错' )
   return (
     <>
       <section className="settings-page">

@@ -7,6 +7,7 @@ export default () => {
     { id: 3, slug: 'ccc', title: 'ccc' },
   ]
 
+
   return (
     <section className='app-page'>
       <div>Hello,Home Page</div>
