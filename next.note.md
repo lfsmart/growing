@@ -3,7 +3,6 @@
 > next.js 在服务端是如何运行的
 >
 > Next.js 在服务端运行时，它充分利用了Node.js环境来进行服务器端渲染（Server-Side Rendering, SSR）和静态站点生成（Static Site Generation, SSG）。以下是Next.js在服务端大致的工作流程：
->
 > 1. **路由处理**： 当用户向服务器发送HTTP请求时，Next.js 的内置服务器（Koa.js为基础）接收到请求，并根据请求的URL映射到相应的页面文件。这些页面文件位于项目中的`pages`目录下，文件名和路径决定了URL路由。
 > 2. **数据获取**： 如果页面组件使用了`getServerSideProps`或`getStaticProps`，这些函数将在服务端运行，异步获取页面所需的动态数据。数据来源可以是数据库查询、API调用或其他外部资源。
 > 3. **服务器端渲染**： 获取到数据后，Next.js使用ReactDOM.server.renderToString或ReactDOM.server.renderToStaticMarkup方法将React组件转化为HTML字符串。这个过程确保了浏览器在接收到响应时，能够直接呈现带有数据填充的完整页面。
@@ -21,6 +20,12 @@ npx create-next-app@14.0.4 # 使用的是最新的版本
 ![image-20240117151309991](C:/Users/user/AppData/Roaming/Typora/typora-user-images/image-20240117151309991.png)
 
 ## 2. 目录结构
+
+​	next 路由系统是基于文件系统的，采用的是约定式的方式。路由页面需要指定 page 文件，如果有子路由则需要指定 layout 页面。如果有接口需要指定 使用 route 文件定义接口。为了区分在实践中，约定如下
+
+-  `_components`: 存放通用组件，这些组件不会直接与页面关联。
+- `_lib`: 存放通用函数库或工具函数。
+- `_middleware`: 自Next.js 12开始引入的中间件文件夹，其中的文件用于处理Next.js请求生命周期，但它们本身并不是路由。
 
 ```
 .
@@ -45,7 +50,6 @@ npx create-next-app@14.0.4 # 使用的是最新的版本
 |   `-- vercel.svg
 |-- tailwind.config.js # 第三方样式
 `-- tsconfig.json
-
 ```
 
 ### 2.1 顶级文件夹
@@ -56,8 +60,6 @@ npx create-next-app@14.0.4 # 使用的是最新的版本
 | [`public`](https://nextjs.org/docs/app/building-your-application/optimizing/static-assets) | Static assets to be served |      |
 
 ### 2.2 顶级文件
-
-
 
 ## 3. 路由
 
@@ -85,7 +87,7 @@ export default ({ children }: { children: React.ReactNode }) => {
 ```
 
 - layout 是布局页面，也就是导航或其他全局组件，里面有视图页面承载占位符 `Outlet` 或者 vue-router 中的 `router-view`，在目录下必须存在。一般情况一个页面只有在根目录下有一个 layout 文件，作为路由视图的渲染位置。当然如果有子路由页面就需要在子路由页面添加新的 layout 文件。
-- page 是视图页面，文件系统中的路由页面必须有 page 文件，page 即为视图渲染的位置也可以理解为 Outlet 占位符渲染的位置。如果 template 文件存在，page 会被渲染到 template
+- page 是视图页面，文件系统中的路由页面必须有 page 文件，page 即为视图渲染的位置也可以理解为 Outlet 占位符渲染的位置。如果 template 文件存在，page 会被渲染到 template， 页面渲染都在服务端进行，不要在 page 页面中使用客户端 的工具和方法，如果需要使用的话，单独抽离出来作为一个客户端渲染模块
 - template 是模版，被渲染在 layout 中，包裹着 page。
 
 ​	在 next@12.x 版本之前，使用的是 page router 页面路由约定在 pages 文件目录下，如果 App router 与 page router 同时存在则优先渲染 App router 下面的路由。
@@ -143,7 +145,7 @@ export default () => {
 
 ### 3.4 路由分组
 
-​	使用 `()` 定义文件目录，为分组理由，里面的路由页面将共用分组目录下的布局。如下所示，about 和 goods 路由页面会被渲染在admin 分组下，方便路由管理。分组目录没有 page 文件。
+​	使用 `(folderName)` 定义文件目录，为分组理由，里面的路由页面将共用分组目录下的布局。如下所示，about 和 goods 路由页面会被渲染在admin 分组下，方便路由管理。分组目录没有 page 文件，[路由分组文档参考](https://nextjs.org/docs/app/building-your-application/routing/route-groups) 。
 
 ![image-20240119161401323](C:/Users/user/AppData/Roaming/Typora/typora-user-images/image-20240119161401323.png)
 
@@ -181,6 +183,63 @@ export default ({ params, searchParams }:  RouteProps) => {
 ```
 
 ​	无论是静态或是动态设置 head 信息都需要使用约定的字段和函数，并通过export 将函数或变量导出，否则设置不起作用。如静态需要导出变量 `metadata`，动态需要使用 `generateMetadata` 函数。
+
+## 5. api
+
+### 5.1 接口约定
+
+​	定义服务端接口，在 App 目录中定义 api 目录作为接口目录或者其他目录名称如 apis 等均可以只是路由的命名空间，接口约定为 route 文件。如果是动态接口，则可以使用 `[param]` ，与动态路由命名方式一致。如下所示：
+
+![image-20240119174955290](C:/Users/user/AppData/Roaming/Typora/typora-user-images/image-20240119174955290.png)
+
+​	**接口定义：**
+
+```ts
+// 定义接口
+import { NextRequest, NextResponse } from 'next/server'
+export const GET = (req: NextRequest, { params }: any) => {
+  return NextResponse.json({
+    success: true,
+    errorMessage: '获取单条记录' + params.id,
+    data: {},
+  })
+}
+```
+
+​	**接口调用：** 通过 fetch 直接调用定义的接口。
+
+```tsx
+'use client';
+import { useState, useEffect } from "react";
+interface Item {
+  id: number;
+  name: string;
+}
+export const List = () => {
+  const [ data, setData ] = useState<Item[]>([]);
+  useEffect( () => {
+    fetch( '/api/goods').then( (res) => res.json()).then( ({ data }) => {
+      setData( data );
+    })
+  });
+  return <div className="list">
+    <ul>
+      { data.map( item => <li className="item" key={ item.id }>{ item.name }</li>)}
+      <li></li>
+    </ul>
+  </div>
+}
+```
+
+​	在调用的时候由于 react@18.2.x 版本测试环境调用了两次，所以 next 在执行 useEffect 中的接口时也是执行了2次，可以在 next.config.js 配置文件中关闭 如下所示：
+
+```javascript
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: false
+}
+module.exports = nextConfig
+```
 
 ## 4. 异步加载
 
