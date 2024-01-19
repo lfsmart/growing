@@ -1,5 +1,17 @@
 # nextjs
 
+> next.js 在服务端是如何运行的
+>
+> Next.js 在服务端运行时，它充分利用了Node.js环境来进行服务器端渲染（Server-Side Rendering, SSR）和静态站点生成（Static Site Generation, SSG）。以下是Next.js在服务端大致的工作流程：
+>
+> 1. **路由处理**： 当用户向服务器发送HTTP请求时，Next.js 的内置服务器（Koa.js为基础）接收到请求，并根据请求的URL映射到相应的页面文件。这些页面文件位于项目中的`pages`目录下，文件名和路径决定了URL路由。
+> 2. **数据获取**： 如果页面组件使用了`getServerSideProps`或`getStaticProps`，这些函数将在服务端运行，异步获取页面所需的动态数据。数据来源可以是数据库查询、API调用或其他外部资源。
+> 3. **服务器端渲染**： 获取到数据后，Next.js使用ReactDOM.server.renderToString或ReactDOM.server.renderToStaticMarkup方法将React组件转化为HTML字符串。这个过程确保了浏览器在接收到响应时，能够直接呈现带有数据填充的完整页面。
+> 4. **生成HTML响应**： 结合生成的HTML、CSS（通过CSS-in-JS库如styled-components或emotion处理）和JavaScript（通常是React组件的bundle），Next.js构建一个完整的HTML响应。其中，JavaScript负责在客户端启动后接管页面，实现SPA（单页应用）的交互体验。
+> 5. **动态路由与API路由**： 对于动态路由（如`pages/posts/[id].js`），Next.js能够在服务端解析请求路径参数并传入对应的组件。同时，Next.js还支持定义API路由（在`pages/api`目录下创建文件），用于处理RESTful API请求。
+> 6. **静态资源处理**： Next.js自动处理静态资源，如图片、字体和其他静态文件，确保它们可以从正确的服务器路径获取。
+> 7. **缓存与优化**： Next.js对数据和页面渲染结果进行了优化，例如通过缓存中间结果来提高性能，尤其是在SSG模式下，生成的静态页面可以被CDN缓存以进一步加速用户访问。
+
 ## 1. 安装
 
 ```bash
@@ -93,5 +105,35 @@ import { useRouter, redirect, RedirectType } from 'next/navigation'
  redirect( '/dashboard/settings#b', RedirectType.replace ); // RedirectType enum push or replace
 ```
 
+## 4. 异步加载
 
+​	next.js 异步加载与 react@18.x 基本一致。如下所示：
+
+```tsx
+// ./components/AsyncComponent/index.tsx
+export default (): Promise<React.ReactNode> => {
+  return new Promise( (resolve, reject ) => {
+    setTimeout( () => {
+      resolve( <div className='async-component'>我是异步组件</div> )
+    }, 3000);
+  })
+}
+```
+
+​	异步组件的使用，同样需要使用 react 中的 lazy 和 Suspense。
+
+```tsx
+'use client'
+import { lazy, Suspense } from 'react'
+const AsyncComponent = lazy(() => import('@/components/AsyncComponent'))
+export default () => {
+  return (
+   <section className="settings-page">
+     <Suspense fallback={ <div>loading</div> }>
+       <AsyncComponent></AsyncComponent>
+     </Suspense>
+   </section>
+  )
+}
+```
 
