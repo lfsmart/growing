@@ -241,6 +241,110 @@ const nextConfig = {
 module.exports = nextConfig
 ```
 
+## 6. 数据库
+
+### 6.1 prisma 框架
+
+​	[官网链接](https://www.prisma.io/docs/getting-started/quickstart)
+
+```bash
+npm install prisma --save-dev # prima
+npx prisma init --datasource-provider sqlite # 初始化数据库
+```
+
+### 6.2 model
+
+ 	定义数据模型，在 prisma 初始化之后生成的 prisma 文件目录下，创建 `./prisma/schema.prisma` 中定义数据模型，定义如下：
+
+```sqlite
+-- 文件类型为 prisma
+-- This is your Prisma schema file,
+-- learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+model Goods {
+  id String @id @unique @default(uuid())
+  name String
+  desc String @default("")
+  content String @default("")
+  createAt DateTime @default(now()) @map("create_at")
+  updateAt DateTime @updatedAt @map("update_at")
+  @@map("products")
+}
+```
+
+​	模型创建完成后，使用命令创建数据库，执行如下命令：
+
+```bash
+npx prisma db push 
+```
+
+### 6.3 数据库连接
+
+​	在项目根目录下，创建 `./db.ts` 文件，用于数据库连接，[官方文档说明](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/help-articles/nextjs-prisma-client-dev-practices#solution) 。
+
+```typescript
+import { PrismaClient } from '@prisma/client'
+
+const prismaClientSingleton = () => {
+  return new PrismaClient()
+}
+
+declare global {
+  var prisma: undefined | ReturnType<typeof prismaClientSingleton>
+}
+
+const prisma = globalThis.prisma ?? prismaClientSingleton()
+
+export default prisma
+
+if (process.env.NODE_ENV !== 'production') globalThis.prisma = prisma
+```
+
+​	数据库连接文件使用了新的第三方包，需要安装 @prisma/client。
+
+```bash
+npm i -D @prisma/client
+```
+
+​	使用 prisma 查询数据库，实现新增商品和查询商品列表的接口，如下所示：
+
+```typescript
+import { NextRequest, NextResponse } from "next/server"
+import prisma from '@/db';
+export const GET = async () => {
+  const data = await prisma.goods.findMany({
+    orderBy: {
+      createAt: 'desc'
+    }
+  });
+  return NextResponse.json({
+    success: true,
+    errorMessage: '',
+    data
+  })
+}
+
+export const POST = async ( req: NextRequest ) => {
+  const data = await req.json();
+  await prisma.goods.create({
+    data
+  });
+  return NextResponse.json({
+    success: true,
+    errorMessage: '创建成功',
+    data: {}
+  })
+}
+```
+
+
+
 ## 4. 异步加载
 
 ​	next.js 异步加载与 react@18.x 基本一致。如下所示：

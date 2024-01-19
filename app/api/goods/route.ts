@@ -1,11 +1,26 @@
-import { NextResponse } from "next/server"
-export const GET = () => {
+import { NextRequest, NextResponse } from "next/server"
+import prisma from '@/db';
+export const GET = async () => {
+  const data = await prisma.goods.findMany({
+    orderBy: {
+      createAt: 'desc'
+    }
+  });
   return NextResponse.json({
     success: true,
     errorMessage: '',
-    data: [
-      { id: 1, name: '夜兰' },
-      { id: 2, name: '行秋' },
-    ]
+    data
+  })
+}
+
+export const POST = async ( req: NextRequest ) => {
+  const data = await req.json();
+  await prisma.goods.create({
+    data
+  });
+  return NextResponse.json({
+    success: true,
+    errorMessage: '创建成功',
+    data: {}
   })
 }
