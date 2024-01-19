@@ -147,6 +147,41 @@ export default () => {
 
 ![image-20240119161401323](C:/Users/user/AppData/Roaming/Typora/typora-user-images/image-20240119161401323.png)
 
+## 4. metadata
+
+​	设置网页 head 信息，通过 Metadata。分为两种形式，一种是静态，一种动态，即异步。[请查看官方文档](https://nextjs.org/docs/app/api-reference/functions/generate-metadata) 如下所示：
+
+### 4.1 动态设置
+
+​	通过约定函数 generateMetadata 函数异步实现动态设置 head 信息。
+
+```tsx
+import { Metadata } from "next"
+export const generateMetadata = async (props: RouteProps): Promise<Metadata> => {
+  return {
+    title: `这是详情页-${props.params.id}`,
+  }
+}
+export default ({ params, searchParams }:  RouteProps) => {
+  return <div>我是 postList 的 id={ params.id }</div>
+}
+```
+
+### 4.2 静态设置
+
+```tsx
+import { Metadata } from "next"
+export const metadata: Metadata = {
+  title: 'next.js',
+  description: '这是详情页',
+}
+export default ({ params, searchParams }:  RouteProps) => {
+  return <div>我是 postList 的 id={ params.id }</div>
+}
+```
+
+​	无论是静态或是动态设置 head 信息都需要使用约定的字段和函数，并通过export 将函数或变量导出，否则设置不起作用。如静态需要导出变量 `metadata`，动态需要使用 `generateMetadata` 函数。
+
 ## 4. 异步加载
 
 ​	next.js 异步加载与 react@18.x 基本一致。如下所示：
