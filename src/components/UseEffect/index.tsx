@@ -45,7 +45,7 @@ export const UseEffect3 = () => {
     return () => {
       console.log( 'cleanup:', count );
     }
-  }, [ ]);
+  }, [count]);
 
   return (
     <>  
@@ -77,6 +77,14 @@ export const UseEffect = () => {
   const handleClick = () => {
     setShow( !show );
   }
+
+  useEffect( () => {
+    fetch( '/api/goods').then( (res) => res.json()).then( ({ data }) => {
+      console.log(data);
+    })
+
+  }, [])
+
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setTitle( e.target.value )
