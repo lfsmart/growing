@@ -1,8 +1,10 @@
-import { Links } from "@/components"
+import { Links } from '@/components'
 export default function Page() {
   return (
     <>
-      <h1>Hello, Dashboard Page!</h1>
+      <section className='dashboard-page'>
+        <h1>Hello, Dashboard Page!</h1>
+      </section>
     </>
   )
 }

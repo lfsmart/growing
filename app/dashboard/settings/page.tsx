@@ -7,12 +7,14 @@ export const metadata: Metadata = {
 export default () => {
   return (
     <>
-      <h1>Hello, settings Page!</h1>
-      <section style={{ height: 600, background: 'green' }} id="a">
+      <section className="settings-page">
+        <h1>Hello, settings Page!</h1>
+        <section style={{ height: 600, background: 'green' }} id="a">
 
-      </section>
-      <section style={{ height: 600, background: 'red' }} id="b">
+        </section>
+        <section style={{ height: 600, background: 'red' }} id="b">
 
+        </section>
       </section>
     </>
   )

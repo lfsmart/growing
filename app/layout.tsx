@@ -13,8 +13,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang='en'>
       <body className={inter.className}>
-        RootLayout
-        {children}
+        <section className='app-layout'>
+          RootLayout
+          {children}
+        </section>
       </body>
     </html>
   )

@@ -1,7 +1,7 @@
 export default ({ children }: { children: React.ReactNode }) => {
   return (
-    <section className="setting-layout">
-      <nav>我是 setting 下的 layout</nav>
+    <section className="dashboard-template">
+      <nav>我是 dashboard template</nav>
       {children}
     </section>
   )
