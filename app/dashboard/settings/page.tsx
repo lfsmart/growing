@@ -10,7 +10,6 @@ const AsyncComponent = lazy(() => import('@/components/AsyncComponent'))
 
 export default () => {
 
-  throw new Error( '模拟报错' )
   return (
     <>
       <section className="settings-page">

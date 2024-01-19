@@ -1,4 +1,6 @@
+'use client'
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface Item{
   id: number;
@@ -7,12 +9,13 @@ interface Item{
 }
 
 export const PostList = ({ posts }: { posts: Item[]}) => {
+  const pathname = usePathname();
   return (
     <ul>
       {
         posts.map(post => (
           <li key={post.id}>
-            <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+            <Link href={`${pathname}/${post.id}`}>{post.title}</Link>
           </li> )
         )
       }

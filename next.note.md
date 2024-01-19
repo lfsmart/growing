@@ -141,6 +141,12 @@ export default () => {
 }
 ```
 
+### 3.4 路由分组
+
+​	使用 `()` 定义文件目录，为分组理由，里面的路由页面将共用分组目录下的布局。如下所示，about 和 goods 路由页面会被渲染在admin 分组下，方便路由管理。分组目录没有 page 文件。
+
+![image-20240119161401323](C:/Users/user/AppData/Roaming/Typora/typora-user-images/image-20240119161401323.png)
+
 ## 4. 异步加载
 
 ​	next.js 异步加载与 react@18.x 基本一致。如下所示：
