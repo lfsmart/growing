@@ -16,5 +16,8 @@ const config: Config = {
     },
   },
   plugins: [],
+  corePlugins: {
+    preflight: false, // 禁止覆盖 UI 库的样式（antd）
+  }
 }
 export default config

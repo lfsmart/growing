@@ -14,7 +14,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang='en'>
       <body className={inter.className}>
         <section className='app-layout'>
-          RootLayout
           {children}
         </section>
       </body>

@@ -122,7 +122,7 @@ declare interface RouteProps {
 }
 ```
 
- 	动态路由页面定义，如下所示：
+动态路由页面定义，如下所示：
 
 ```tsx
 // 前端和服务端均可以执行
@@ -148,6 +148,23 @@ export default () => {
 ​	使用 `(folderName)` 定义文件目录，为分组理由，里面的路由页面将共用分组目录下的布局。如下所示，about 和 goods 路由页面会被渲染在admin 分组下，方便路由管理。分组目录没有 page 文件，[路由分组文档参考](https://nextjs.org/docs/app/building-your-application/routing/route-groups) 。
 
 ![image-20240119161401323](C:/Users/user/AppData/Roaming/Typora/typora-user-images/image-20240119161401323.png)
+
+### 3.5 监听路由
+
+​	监听路由变化可以通过钩子函数 `usePathname` 监听。如下所示：
+
+```tsx
+import { usePathname, useRouter } from 'next/navigation'
+const pathname = usePathname(); // 也可以用于设置默认 state 
+export default () => {
+    useEffect(() => {
+        // pathname 处理变换后的逻辑 
+    }, [pathname])
+    return <div></div>
+} 
+```
+
+
 
 ## 4. metadata
 
@@ -343,6 +360,137 @@ export const POST = async ( req: NextRequest ) => {
 }
 ```
 
+## 7. antd
+
+### 7.1 安装
+
+```bash
+npm i -S antd
+```
+
+​	在使用 antd 前端页面需要客户端指令 `use client` 否则报错。如下登录页面：
+
+```tsx
+'use client' // 客户端指令
+import { Card, Form, Button, Input } from 'antd'
+type FieldType = {
+  username?: string;
+  password?: string;
+};
+export default () => {
+  const onFinish = (values: FieldType) => {
+    console.log( values, '---values---' );
+  }
+  return (
+    <div className='login-form pt-20'>
+      <Card title='Next 全栈管理后台' className='w-4/5 mx-auto'>
+      <Form labelCol={{span: 3}} onFinish={ (v) => {
+        console.log(v)
+      }}>
+        <Form.Item<FieldType> label='用户名' name='username'>
+          <Input placeholder='请输入用户名'></Input>
+        </Form.Item>
+        <Form.Item<FieldType> label='密码' name='password'>
+          <Input.Password placeholder='请输入密码'></Input.Password>
+        </Form.Item>
+        <Form.Item>
+          <Button type='primary' htmlType='submit'>登录</Button>
+        </Form.Item>
+      </Form>
+      </Card>
+    </div>
+  )
+}
+
+```
+
+### 7.2 修改 tailwind 配置文件
+
+如果出现了样式覆盖问题，需要修改 tailwind.config.ts 配置文件。
+
+```javascript
+import type { Config } from 'tailwindcss'
+const config: Config = {
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic':
+          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      },
+    },
+  },
+  plugins: [],
+  corePlugins: {
+    preflight: false, // 禁止覆盖 UI 库的样式（antd）
+  }
+}
+export default config
+```
+
+### 7.3 Form
+
+​	在使用 antd Form 组件时需要指定，有报错
+
+## 8. 中间件
+
+ 在根目录下创建 middleware 文件，中间件每一次代码执行都会先执行中间件逻辑。[middleware 官方文档说明](https://nextjs.org/docs/app/building-your-application/routing/middleware) 。
+
+```ts
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+// This function can be marked `async` if using `await` inside
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  if( pathname.startsWith( '/admin' ) ){
+    // 管理后台
+    // 是否登录
+    if( !pathname.startsWith('/admin/login') ){
+      if(request.cookies.get('admin-token') ){
+        // 已经登录
+      }else {
+        // 跳转到登录页
+        return NextResponse.redirect( new URL('/admin/login', request.url ) );
+      }
+    }
+  }
+  console.log( '中间件执行了' );
+  // return NextResponse.redirect(new URL('/home', request.url))
+}
+// See "Matching Paths" below to learn more
+// export const config = {
+//   matcher: '/about/:path*',
+// }
+```
+
+### 8.1 登录接口
+
+​	使用登录接口，向客户端设置头部信息 `cookie` ，客户端通过是否存在 cookie 判断是否登录。
+
+```ts
+import { NextRequest, NextResponse } from "next/server"
+export const POST = async ( req: NextRequest ) => {
+  // const data = await req.json();
+  // await prisma.goods.create({
+  //   data
+  // });
+  return NextResponse.json({
+    success: true,
+    errorMessage: '登录成功',
+    data: {},
+  },{
+    headers: {
+      'Set-cookie': 'admin-token=123;Path=/'
+    }
+  })
+}
+```
+
 
 
 ## 4. 异步加载
@@ -376,6 +524,8 @@ export default () => {
   )
 }
 ```
+
+
 
 ## 5. error 
 
