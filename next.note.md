@@ -23,7 +23,7 @@ npx create-next-app@14.0.4 # 使用的是最新的版本
 
 ​	next 路由系统是基于文件系统的，采用的是约定式的方式。路由页面需要指定 page 文件，如果有子路由则需要指定 layout 页面。如果有接口需要指定 使用 route 文件定义接口。为了区分在实践中，约定如下
 
--  `_components`: 存放通用组件，这些组件不会直接与页面关联。
+-  `_components`: 存放通用组件，这些组件不会直接与路由页面关联。
 - `_lib`: 存放通用函数库或工具函数。
 - `_middleware`: 自Next.js 12开始引入的中间件文件夹，其中的文件用于处理Next.js请求生命周期，但它们本身并不是路由。
 
@@ -483,7 +483,7 @@ export const POST = async ( req: NextRequest ) => {
     success: true,
     errorMessage: '登录成功',
     data: {},
-  },{
+  }, { // 第二个选项参数
     headers: {
       'Set-cookie': 'admin-token=123;Path=/'
     }

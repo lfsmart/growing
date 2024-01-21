@@ -10,6 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// 商品
 model Goods {
   id String @id @unique @default(uuid())
   name String
@@ -18,4 +19,15 @@ model Goods {
   createAt DateTime @default(now()) @map("create_at")
   updateAt DateTime @updatedAt @map("update_at")
   @@map("products")
+}
+
+// 文章
+model Article {
+  id String @id @unique @default(uuid())
+  title String
+  desc String? @default("")
+  content String? @default("")
+  createAt DateTime @default(now()) @map("create_at")
+  updateAt DateTime @updatedAt @map("update_at")
+  @@map("articles")
 }

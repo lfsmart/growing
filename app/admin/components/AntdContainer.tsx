@@ -28,7 +28,7 @@ export default function AntdContainer({ children }: { children: React.ReactNode 
           theme='dark'
           mode='inline'
           defaultSelectedKeys={['/admin/dashboard']}
-          selectedKeys={ selectedKeys }
+          selectedKeys={ selectedKeys } 
           onClick={ ({ key }) => handleClick( key ) }
           items={[
             {
@@ -42,9 +42,9 @@ export default function AntdContainer({ children }: { children: React.ReactNode 
               label: '用户信息',
             },
             {
-              key: '3',
+              key: '/admin/articles',
               icon: <UploadOutlined />,
-              label: 'nav 3',
+              label: '文章管理',
             },
           ]}
         />
@@ -64,11 +64,12 @@ export default function AntdContainer({ children }: { children: React.ReactNode 
         </Header>
         <Content
           style={{
-            margin: '24px 16px',
-            padding: 24,
+            margin: 12,
+            padding: 8,
             minHeight: 280,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
+            overflow: 'auto'
           }}
         >
           {children}
