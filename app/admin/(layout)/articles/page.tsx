@@ -1,17 +1,19 @@
 'use client'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Card, Form, Input, Button, Table, Modal, Space, message, Popconfirm } from 'antd'
+import { Card, Form, Input, Button, Table, Modal, Space, message, Popconfirm, Image } from 'antd'
 import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import MyUpload from './../../components/MyUpload';
 type RowItem = {
   id: string;
   title: string;
   desc?: string;
+  image?: string;
 }
 
 type Query = {
   pageIndex: number;
   pageSize: number;
-  title: string,
+  title: string;
 }
 
 const defaultQuery: Query = {
@@ -32,6 +34,7 @@ export default () => {
     id: '',
     title: '',
     desc: '',
+    image: ''
   }
 
   const createOrModify = useCallback( async ({ id, ...values }: RowItem) => {
@@ -44,6 +47,7 @@ export default () => {
       }).then( res => res.json());
       message.success( '更新成功' )
     }else {
+
       await fetch('/api/admin/articles',{
         method: 'POST',
         body: JSON.stringify(values),
@@ -81,7 +85,6 @@ export default () => {
   }, []);
 
   const search = ({ title}: { title: string }) => {
-    console.log( title, '123456' );
     setQuery({ ...query, title });
   }
 
@@ -144,8 +147,15 @@ export default () => {
         }, { 
           title: '简介', 
           dataIndex: 'desc' 
-        }, { 
+        }, {
+          title: '封面',
+          align: 'center',
+          width: 120,
+          dataIndex: 'image',
+          render: (val, row) => val && <Image width={ 80 } src={ val } />
+        },{ 
           title: '操作',
+          align: 'center',
           width: 120,
           render: (value, rowData) => {
             return <Space> 
@@ -180,14 +190,20 @@ export default () => {
           <Form.Item label='文章ID' name='id' hidden>
             <Input />
           </Form.Item>
-          <Form.Item label='名字' name='title' rules={[{
-            required: true,
-            message: '标题不能为空'
-          }]}>
-            <Input placeholder='请输入名字' ></Input>
+          <Form.Item 
+            label='名字' 
+            name='title' 
+            rules={[
+              { required: true, message: '标题不能为空' }
+            ]}
+          >
+            <Input placeholder='请输入名字' />
           </Form.Item>
           <Form.Item label='简介' name='desc'>
             <Input.TextArea placeholder='请输入简介'></Input.TextArea>
+          </Form.Item>
+          <Form.Item label='封面' name='image' >
+            <MyUpload></MyUpload>
           </Form.Item>
         </Form>
       </Modal>

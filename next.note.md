@@ -491,7 +491,135 @@ export const POST = async ( req: NextRequest ) => {
 }
 ```
 
+## 9. 图片上传
 
+### 9.1 接口实现
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { randomUUID } from "crypto";
+import path from 'path';
+import fs from 'fs';
+import dayjs from 'dayjs';
+
+const saveFile = async (blob: File) => {
+  const dirName = '/uploads/' + dayjs().format('YYYY-MM-DD');
+  const uploadDir = path.join(process.cwd(), 'public'+ dirName );
+  fs.mkdirSync(uploadDir, { // 创建目录
+    recursive: true,
+  });
+  const fileName = randomUUID() + '.png';
+  const arrayBuffer = await blob.arrayBuffer();
+  fs.writeFileSync(uploadDir + '/' + fileName, new DataView( arrayBuffer  ) );
+  return dirName + '/' + fileName; // 返回接口路径
+ 
+}
+// 上传图片
+export const POST = async (req: NextRequest) => {
+  const data = await req.formData();
+  const fileName = await saveFile( data.get('file') as File );
+  return NextResponse.json({
+    success: true,
+    data: fileName
+  });
+}
+```
+
+​	注意，如果接口地址有误，可能不报 404 错误，有时会报 500 错误，如果代码都无法进入有同事报服务器内部错误，需要进一步确认接口地址。
+
+### 9.2 form 表单自定义控件
+
+​	在自定义表单控件中接受 onChange 函数，通过 onChange 函数，将数据提交给 antd 的 Form 组件。在自定义控件中通过 value 可以获取 Form 组件设置字段值，通过 value 初始化自定义控件的数据状态即可。
+
+```tsx
+// 子组件，实现上传图片，并将上传后的图片地址，通过 onChange 传给父组件 Form 
+import React, { useState, type ChangeEventHandler }  from 'react';
+import { Input, Upload, message, type GetProp, type UploadProps  } from 'antd';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import ImgCrop from 'antd-img-crop';
+
+type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+
+const beforeUpload = (file: FileType) => {
+  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+  if (!isJpgOrPng) {
+    message.error('You can only upload JPG/PNG file!');
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    message.error('Image must smaller than 2MB!');
+  }
+  return isJpgOrPng && isLt2M;
+};
+
+
+type Props = {
+  name?: UploadProps['name'];
+  onChange?: ChangeEventHandler; // 表单事件
+  value?: string; // 表单设置的 value
+}
+
+const App: React.FC = ({ name='file', onChange, value=''}: Props) => {
+  
+  const [loading, setLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string>( value );
+
+  const handleChange: UploadProps['onChange'] = (info) => {
+    if (info.file.status === 'uploading') {
+      setLoading(true);
+      return;
+    }
+    if (info.file.status === 'done') {
+      setImageUrl( info.file.response.data );
+      onChange?.( info.file.response.data );
+    }
+  };
+
+  const uploadButton = (
+    <button style={{ border: 0, background: 'none' }} type="button">
+      {loading ? <LoadingOutlined /> : <PlusOutlined />}
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </button>
+  );
+
+  return (
+    <ImgCrop rotationSlider>
+      <Upload
+        name={ name }
+        action="/api/common/upload"
+        listType="picture-card"
+        showUploadList={ false }
+        beforeUpload={ beforeUpload }
+        onChange={ handleChange }
+      >
+        {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+      </Upload>
+    </ImgCrop>
+  );
+};
+
+export default App;
+```
+
+​	在父组件，即 Form 控件中可以向使用内置的 Form 表单一样受控。
+
+```tsx
+{/* 省略代码 */}
+<Form 
+  layout='vertical' 
+  form={ myForm } 
+  onFinish={ createOrModify }
+  preserve={ false }
+  initialValues={ initialValues }
+>
+  {/* 省略代码 */}
+  <Form.Item label='封面' name='image' >
+    <MyUpload></MyUpload>
+  </Form.Item>
+</Form>
+```
+
+​	上面仅是自定义控件实现的一种方式，另外还有其他的实现方式，总体上逻辑基本一致。
 
 ## 4. 异步加载
 
