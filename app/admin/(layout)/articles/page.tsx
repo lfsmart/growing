@@ -3,11 +3,13 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Card, Form, Input, Button, Table, Modal, Space, message, Popconfirm, Image } from 'antd'
 import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import MyUpload from './../../components/MyUpload';
+import MyEditor from './../../components/MyEditor';
 type RowItem = {
   id: string;
   title: string;
   desc?: string;
   image?: string;
+  content?: string;
 }
 
 type Query = {
@@ -34,7 +36,8 @@ export default () => {
     id: '',
     title: '',
     desc: '',
-    image: ''
+    image: '',
+    content: '',
   }
 
   const createOrModify = useCallback( async ({ id, ...values }: RowItem) => {
@@ -67,15 +70,16 @@ export default () => {
     })
   }, [ query ]);
 
-  const add = useCallback(() => {
+  const add = () => {
     setOpen( true );
     myForm.setFieldsValue(initialValues);
-  }, [])
+  }
 
-  const edit = useCallback((rowData: RowItem) => {
-    setOpen( true );
+  const edit = (rowData: RowItem) => {
+    console.log( rowData );
     myForm.setFieldsValue( rowData );
-  }, [])
+    setOpen( true );
+  }
 
   const remove = useCallback(async (rowData: RowItem) => {
     await fetch(`/api/admin/articles/${rowData.id}`, {
@@ -97,7 +101,11 @@ export default () => {
         </Button>
       }
     >
-      <Form layout='inline' form={searchFrom} onFinish={ search }>
+      <Form layout='inline' 
+        form={searchFrom} 
+        onFinish={ search }
+        initialValues={ { title: '' }}
+      >
         <Form.Item label='标题' name='title'>
           <Input placeholder='请输入关键词'  />
         </Form.Item>
@@ -132,7 +140,6 @@ export default () => {
               })
             }
           }
-          
         }
         columns={[{ 
           title: '序号', 
@@ -152,7 +159,7 @@ export default () => {
           align: 'center',
           width: 120,
           dataIndex: 'image',
-          render: (val, row) => val && <Image width={ 80 } src={ val } />
+          render: (val, row) => val && <Image width={ 80 } alt="cover" src={ val } />
         },{ 
           title: '操作',
           align: 'center',
@@ -176,6 +183,7 @@ export default () => {
         onCancel={() => setOpen(false)} 
         destroyOnClose={ true }
         maskClosable={ false }
+        width={'45vw'}
         onOk={() => {
         myForm.submit();
         
@@ -202,8 +210,11 @@ export default () => {
           <Form.Item label='简介' name='desc'>
             <Input.TextArea placeholder='请输入简介'></Input.TextArea>
           </Form.Item>
-          <Form.Item label='封面' name='image' >
+          <Form.Item label='封面' name='image'>
             <MyUpload></MyUpload>
+          </Form.Item>
+          <Form.Item label='详情' name='content'>
+            <MyEditor></MyEditor>
           </Form.Item>
         </Form>
       </Modal>

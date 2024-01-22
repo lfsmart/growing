@@ -18,7 +18,7 @@ export default function AntdContainer({ children }: { children: React.ReactNode 
   const handleClick = useCallback( (key: string) => {
     router.push( key );
     setSelectedKeys([key])
-  }, [])
+  }, [ router ])
 
   return (
     <Layout style={{ height: '100vh' }}>

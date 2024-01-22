@@ -621,6 +621,64 @@ export default App;
 
 ​	上面仅是自定义控件实现的一种方式，另外还有其他的实现方式，总体上逻辑基本一致。
 
+## 10. 富文本编辑器
+
+### 10.1 安装
+
+```bash
+npm i @wangeditor/editor @wangeditor/editor-for-react # 安装
+```
+
+​	安装完成后，按照 form 表单控件改造即可。 
+
+​	[图片上传](https://www.wangeditor.com/v5/menu-config.html#%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87)需要配置接口服务器，按照官网配置即可。
+
+## 11. 发布 & 部署
+
+### 11.1 打包
+
+​	关闭匿名函数组件报错问题，在 eslint 配置文件中。需要安装 `"eslint-plugin-import": "^2.29.1"` 插件
+
+```bash
+npm i -D eslint-plugin-import
+```
+
+​	关闭匿名函数组件导出的 eslint 报错的配置。
+
+```json
+{
+  "extends": "next/core-web-vitals",
+  "plugins": ["import"],
+  "rules": {
+    "import/no-anonymous-default-export": "off",
+    "react/display-name": "off" // 关闭规则
+  }
+}
+```
+
+## 11.2 部署
+
+​	使用 pm2 管理 node 服务。
+
+```bash
+npm i -g pm2 # 安装
+```
+
+​	使用 pm2 运行项目
+
+```bash
+pm2 start npm --name next-pre-app -- start 
+```
+
+​	说明  pm2 start 启动 pm2 运行 npm 脚本命令，服务的名称是 next-pre-app，-- npm 脚本命令参数 start 是参数
+
+```bash
+pm2 ls		# list
+pm2 del <id> # 删除
+```
+
+
+
 ## 4. 异步加载
 
 ​	next.js 异步加载与 react@18.x 基本一致。如下所示：

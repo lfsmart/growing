@@ -1,7 +1,9 @@
-import React, { useState, type ChangeEventHandler }  from 'react';
-import { Input, Upload, message, type GetProp, type UploadProps  } from 'antd';
+'use client'
+import React, { FC, useState, type ChangeEventHandler }  from 'react';
+import { Upload, message, type GetProp, type UploadProps  } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import ImgCrop from 'antd-img-crop';
+import Image from 'next/image';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -24,7 +26,7 @@ type Props = {
   value?: string; // 表单设置的 value
 }
 
-const App: React.FC = ({ name='file', onChange, value=''}: Props) => {
+const MyUpload: FC<Props> = ({ name='file', onChange, value=''}) => {
   
   const [ loading, setLoading] = useState(false);
   const [ imageUrl, setImageUrl] = useState<string>( value );
@@ -58,11 +60,11 @@ const App: React.FC = ({ name='file', onChange, value=''}: Props) => {
           beforeUpload={ beforeUpload }
           onChange={ handleChange }
         >
-          {imageUrl ? <img src={imageUrl} alt="cover" style={{ width: '100%' }} /> : uploadButton}
+          {imageUrl ? <Image src={imageUrl} alt="cover" style={{ width: '100%' }} /> : uploadButton}
         </Upload>
       </ImgCrop>
     </>
   );
 };
 
-export default App;
+export default MyUpload;
