@@ -656,7 +656,7 @@ npm i -D eslint-plugin-import
 }
 ```
 
-## 11.2 部署
+### 11.2 部署
 
 ​	使用 pm2 管理 node 服务。
 
@@ -675,9 +675,44 @@ pm2 start npm --name next-pre-app -- start
 ```bash
 pm2 ls		# list
 pm2 del <id> # 删除
+pm2 restart <id> # 重启服务
+pm2 kill # 杀死进程
 ```
 
+​	在 window 系统运行 pm2 报错，需要使用 第三方包解决，如下所示:
 
+```bash
+npm i -D node-cmd
+```
+
+​	然后，编写运行脚本文件。
+
+```javascript
+// start.js
+const cmd = require('node-cmd'); 
+cmd.run( 'npm start' );
+```
+
+​	运行脚本文件。
+
+```bash
+pm2 start start.js --name next-app
+```
+
+​	然后就能正常启动了。静态资源需要使用静态资源服务器代理，使用 nginx 做反向代理
+
+```nginx
+server{
+    listen 301;
+    location / {
+        proxy_pass http://localhost:3000;
+    }
+    # 配置静态资源目录
+    location /uploads {
+        alias /Users/ ...图片的绝对路径 /public/uploads
+    }
+}
+```
 
 ## 4. 异步加载
 
