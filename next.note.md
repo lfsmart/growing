@@ -693,7 +693,7 @@ const cmd = require('node-cmd');
 cmd.run( 'npm start' );
 ```
 
-​	运行脚本文件。
+​	运行脚本文件。不需要使用 run。
 
 ```bash
 pm2 start start.js --name next-app
@@ -745,8 +745,6 @@ export default () => {
   )
 }
 ```
-
-
 
 ## 5. error 
 

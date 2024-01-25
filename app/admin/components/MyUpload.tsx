@@ -60,7 +60,7 @@ const MyUpload: FC<Props> = ({ name='file', onChange, value=''}) => {
           beforeUpload={ beforeUpload }
           onChange={ handleChange }
         >
-          {imageUrl ? <Image src={imageUrl} alt="cover" style={{ width: '100%' }} /> : uploadButton}
+          {imageUrl ? <Image src={imageUrl} alt="cover" style={{ width: '100%' }} width={100} height={100}/> : uploadButton}
         </Upload>
       </ImgCrop>
     </>

@@ -2,64 +2,29 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Card, Form, Input, Button, Table, Modal, Space, message, Popconfirm, Image } from 'antd'
 import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import MyUpload from './../../components/MyUpload';
-import MyEditor from './../../components/MyEditor';
-type RowItem = {
-  id: string;
-  title: string;
-  desc?: string;
-  image?: string;
-  content?: string;
-}
+import { Edit } from './_components'
 
-type Query = {
-  pageIndex: number;
-  pageSize: number;
-  title: string;
-}
-
-const defaultQuery: Query = {
+const defaultQuery: Article.Query = {
   pageIndex: 1,
   pageSize: 10,
-  title: ''
+  title: '',
 }
 
+
 export default () => {
-  const [ open, setOpen ] = useState(false)
-  const [ list, setList ] = useState<RowItem[]>([])
-  const [ query, setQuery ] = useState<Query>(defaultQuery);
-  const [ myForm ] = Form.useForm();
+  const [ list, setList ] = useState<Article.RowItem[]>([])
+  const [ query, setQuery ] = useState<Article.Query>(defaultQuery);
   const [ searchFrom ] = Form.useForm();
   const [ total, setTotal ] = useState(0);
+  const modalEditRef = useRef<Article.ModalEditRef>(null);
 
-  const initialValues: RowItem = {
+  const initialValues: Article.RowItem = {
     id: '',
     title: '',
     desc: '',
     image: '',
     content: '',
   }
-
-  const createOrModify = useCallback( async ({ id, ...values }: RowItem) => {
-
-    if( id ){
-      // 修改
-      const data = await fetch(`/api/admin/articles/${id}`,{
-        method: 'PUT',
-        body: JSON.stringify(values),
-      }).then( res => res.json());
-      message.success( '更新成功' )
-    }else {
-
-      await fetch('/api/admin/articles',{
-        method: 'POST',
-        body: JSON.stringify(values),
-      }).then( res => res.json());
-      message.success( '添加成功' )
-    }
-    setQuery({ ...defaultQuery });
-    setOpen( false );
-  }, []);
 
   // 触发列表渲染
   useEffect( () => {
@@ -70,40 +35,43 @@ export default () => {
     })
   }, [ query ]);
 
-  const add = () => {
-    setOpen( true );
-    myForm.setFieldsValue(initialValues);
-  }
-
-  const edit = (rowData: RowItem) => {
-    console.log( rowData );
-    myForm.setFieldsValue( rowData );
-    setOpen( true );
-  }
-
-  const remove = useCallback(async (rowData: RowItem) => {
+  const remove = useCallback(async (rowData: Article.RowItem) => {
     await fetch(`/api/admin/articles/${rowData.id}`, {
       method: 'DELETE'
     }).then( res => res.json());
     setQuery({ ...defaultQuery });
   }, []);
 
-  const search = ({ title}: { title: string }) => {
+  const search = ({ title }: { title: string }) => {
     setQuery({ ...query, title });
   }
 
+
+  const handClick = useCallback(( type: string, rowData?: Article.RowItem | Article.Query ) => {
+    switch( type ){
+      case 'add':  modalEditRef.current!.show( initialValues ); break;
+      case 'edit': modalEditRef.current!.show( rowData as Article.RowItem); break;
+      case 'remove': remove( rowData as Article.RowItem ); break;
+      case 'search': search( rowData as Article.Query ); break;
+    }
+  }, []);
+
+
+ 
+
+  
   return (
     <Card
       title='文章管理'
       extra={
-        <Button type='primary' onClick={ add }>
+        <Button type='primary' onClick={ () => handClick( 'add' ) }>
           <PlusOutlined />
         </Button>
       }
     >
       <Form layout='inline' 
         form={searchFrom} 
-        onFinish={ search }
+        onFinish={ values => handClick( 'search', values ) }
         initialValues={ { title: '' }}
       >
         <Form.Item label='标题' name='title'>
@@ -166,58 +134,15 @@ export default () => {
           width: 120,
           render: (value, rowData) => {
             return <Space> 
-              <Button size='small' icon={<EditOutlined />} type='primary' onClick={ () => edit( rowData ) }></Button>
-              <Popconfirm title='是否确认删除？' onConfirm={ () => remove( rowData )}>
+              <Button size='small' icon={<EditOutlined />} type='primary' onClick={ () => handClick( 'edit', rowData ) }></Button>
+              <Popconfirm title='是否确认删除？' onConfirm={ () => handClick( 'remove', rowData ) }>
                 <Button size='small' icon={<DeleteOutlined />} type='primary' danger></Button>
               </Popconfirm>
             </Space>
           } 
         }]}
-        
-        
       ></Table>
-      
-      <Modal 
-        title='编辑' 
-        open={open} 
-        onCancel={() => setOpen(false)} 
-        destroyOnClose={ true }
-        maskClosable={ false }
-        width={'45vw'}
-        onOk={() => {
-        myForm.submit();
-        
-      }}>
-        <Form 
-          layout='vertical' 
-          form={ myForm } 
-          onFinish={ createOrModify }
-          preserve={ false }
-          initialValues={ initialValues }
-        >
-          <Form.Item label='文章ID' name='id' hidden>
-            <Input />
-          </Form.Item>
-          <Form.Item 
-            label='名字' 
-            name='title' 
-            rules={[
-              { required: true, message: '标题不能为空' }
-            ]}
-          >
-            <Input placeholder='请输入名字' />
-          </Form.Item>
-          <Form.Item label='简介' name='desc'>
-            <Input.TextArea placeholder='请输入简介'></Input.TextArea>
-          </Form.Item>
-          <Form.Item label='封面' name='image'>
-            <MyUpload></MyUpload>
-          </Form.Item>
-          <Form.Item label='详情' name='content'>
-            <MyEditor></MyEditor>
-          </Form.Item>
-        </Form>
-      </Modal>
+     <Edit ref={ modalEditRef } setQuery={ setQuery }></Edit>
     </Card>
   )
 }
