@@ -1,5 +1,11 @@
 {
+  "name": "electron-basic",
+  "version": "1.0.0",
   "description": "electron@11.x",
+  "keywords": [],
+  "author": "lantian",
+  "license": "ISC",
+  "main": "src/lifecycle/main.js",
   "scripts": {
     "dev": "nodemon --watch src/**/*.js --exec electron ."
   },
