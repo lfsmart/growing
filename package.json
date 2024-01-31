@@ -1,0 +1,9 @@
+{
+  "description": "electron@11.x",
+  "scripts": {
+    "dev": "nodemon --watch src/**/*.js --exec electron ."
+  },
+  "devDependencies": {
+    "electron": "^11.5.0"
+  }
+}
