@@ -2,16 +2,15 @@
  * 功能：主进程
  */
 const { app, BrowserWindow } = require( 'electron' );
-const { getTempletePath } = require( './../tools' );
+const path = require( 'path' );
 
-const rootDir = getTempletePath(__dirname);
 // 创建窗口
 function createWindow(){
   let mainWin = new BrowserWindow({
     width: 900,
     height: 500
   });
-  mainWin.loadFile( rootDir() );
+  mainWin.loadFile( path.join( __dirname, 'index.html' ) );
 
   // dom-ready
   mainWin.webContents.on('dom-ready', () => {

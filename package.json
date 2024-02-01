@@ -5,7 +5,7 @@
   "keywords": [],
   "author": "lantian",
   "license": "ISC",
-  "main": "src/lifecycle/main.js",
+  "main": "src/window/main.js",
   "scripts": {
     "dev": "nodemon --watch src/**/*.js --exec electron ."
   },
