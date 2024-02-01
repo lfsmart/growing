@@ -281,5 +281,36 @@ window.addEventListener( 'DOMContentLoaded', () => {
 })
 ```
 
+## 6.6 自定义窗口
+
+​	实现窗口最大化、最小化、窗口恢复、关闭等自定义操作。在模版页面布局完成后，通过监听 DOM 事件操作主窗口。
+
+```javascript
+// 渲染进程
+const { remote } = require( 'electron' );
+window.addEventListener( 'DOMContentLoaded', () => {
+  const zoominDom = document.querySelector('#zoomin');
+  const zoomoutDom = document.querySelector('#zoomout');
+  const closeDom = document.querySelector('#close');
+  const mainWin = remote.getCurrentWindow();
+  // 最小化
+  zoominDom.addEventListener( 'click', () => {
+    !mainWin.isMinimized() && mainWin.minimize()
+  }, false );
+  // 最大化
+  zoomoutDom.addEventListener( 'click', () => {
+    if( !mainWin.isMaximized() ){
+      mainWin.maximize(); // 最大化
+    }else {
+      mainWin.restore(); // 恢复
+    }
+  }, false );
+  // 关闭
+  closeDom.addEventListener( 'click', () => {
+    mainWin.close();
+  }, false );
+})
+```
+
 
 
