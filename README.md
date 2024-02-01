@@ -29,7 +29,7 @@ npm i -g nodemon
 
 # 3. 调试
 
-​	在 vscode 中内置了 JavaScript Debugger 调试插件，这个插件与之前的 Debugger for Chrome 是一致的。在调试 electron 需要注意主进程和子进程调试的异同。调试配置需要在项目目录中配置 `.vscode/launch.json` 文件。由于不同的语言的配置不同，vscode 官方提供了配置方案，[官方配置](https://github.com/microsoft/vscode-recipes/tree/main/Electron) 直接粘贴到 `.vscode/launch.json` 即可。在渲染进程中可以拉起 chrome 调试工具，`ctrl + shift + I`
+​	在 vscode 中内置了 JavaScript Debugger 调试插件，这个插件与之前的 Debugger for Chrome 是一致的。在调试 electron 需要注意主进程和子进程调试的异同。调试配置需要在项目目录中配置 `.vscode/launch.json` 文件。由于不同的语言的配置不同，vscode 官方提供了配置方案，[官方配置](https://github.com/microsoft/vscode-recipes/tree/main/Electron) 直接粘贴到 `.vscode/launch.json` 即可。在渲染进程中可以拉起 chrome 调试工具，`ctrl + shift + I`，或者直接在代码中自动打开调试工具。
 
 ```json
 {
@@ -66,6 +66,13 @@ npm i -g nodemon
 ![image-20240127125723391](https://raw.githubusercontent.com/lfsmart/images/master/img/image-20240127125723391.png?token=AEUNKV75WLSMCO3FRRCSKRTFXD7JI)
 
 ![image-20240127125757582](https://raw.githubusercontent.com/lfsmart/images/master/img/image-20240127125757582.png?token=AEUNKVY6DY3NF2FJF75JVSLFXD7JU)
+
+​	如果在调试的过程中需要打印，使用 console 控制台输出乱码，执行如下命令：
+
+```bash
+chcp # 查看当前编码 默认是 936
+chcp 65001 # 对应编码为 utf-8
+```
 
 # 4. Electron 工作流程
 
@@ -314,7 +321,7 @@ window.addEventListener( 'DOMContentLoaded', () => {
 
 ## 6.7 阻止窗口关闭
 
-​	通过布局实现 modal 弹窗，通过监听窗口卸载事件 `onbeforeunload` 阻止窗口关闭，并弹出自定义模态框，通过自定义模态框销毁 window 窗口。
+​	通过 html 实现 modal 弹窗布局，监听窗口卸载事件 `onbeforeunload` 阻止窗口关闭，并弹出自定义模态框，通过自定义模态框销毁 window 窗口。
 
 ```javascript
 // 渲染进程
@@ -339,7 +346,153 @@ window.addEventListener( 'DOMContentLoaded', () => {
     mainWin.destroy()
   }, false )
 })
+```
 
+# 7. 菜单
+
+​	通过 electron 中的 Menu 模块操作菜单选项。[官方文档说明](https://www.electronjs.org/zh/docs/latest/api/menu#%E4%B8%BB%E8%8F%9C%E5%8D%95%E7%9A%84%E5%90%8D%E7%A7%B0)，[menu-item](https://www.electronjs.org/zh/docs/latest/api/menu-item ) 。
+
+> 第一步：创建菜单选项模版，`Menu.buildFromTemplate` 。
+>
+> 第二步：设置菜单选项，将菜单模版添加到应用。`Menu.setApplicationMenu` 。
+
+```javascript
+const { Menu } = require( 'electron' );
+// 生成需要的菜单项
+const menu = Menu.buildFromTemplate([
+  { 
+    label: '文件',
+    submenu: [
+      { label: '关闭文件夹', click:() => console.log('事件') },
+      { role: 'undo', label: '撤销'},
+      { type: 'separator' },
+      { label: '关于', role: 'about' },
+      { type: 'separator' },
+      { type: 'checkbox', label: 'checkbox1' },
+      { type: 'radio', label: 'rdo1' },
+    ] 
+  },
+  { label: '编辑' }
+]);
+// 将自定义菜单添加代应用里
+Menu.setApplicationMenu( menu );
+```
+
+​	自定义菜单会导致，无法打开开发开发者工具，需要手动开启调试工具。如下所示：
+
+```javascript
+const mainWin = new BrowserWindow({
+    width: 800,
+    height: 600
+}); 
+mainWin.webContents.openDevTools();
+```
+
+### 7.1 role 选项
+
+​	role 选项默认是系统选项，选项参数有：undo、redo、cut、copy、paste、pasteAndMatchStyle、delete、selectAll、reload、forceReload、toggleDevTools、resetZoom、zoomIn、zoomOut、togglefullscreen、window、minimize、close、help、about、services、hide、hideOthers、unhide、quit、startSpeaking、stopSpeaking、zoom、front、appMenu、fileMenu、editMenu、viewMenu、recentDocuments、toggleTabBar、selectNextTab、selectPreviousTab、mergeAllWindows、clearRecentDocuments、moveTabToNewWindow、windowMenu 41个选项参数
+
+```javascript
+const menus = Menu.buildFromTemplate([
+  { 
+    label: 'role',
+    submenu: [
+      { label: '复制', role: 'copy' },
+      { label: '剪切', role: 'cut' },
+      { label: '粘贴', role: 'paste' },
+      { label: '最小化', role: 'minimize' },
+    ] 
+  }
+]);
+Menu.setApplicationMenu( menus );
+```
+
+### 7.2 type 选项
+
+​	type 包含，checkbox、radio、separator、submenu、normal 5个选项值。
+
+```javascript
+const menus = Menu.buildFromTemplate([
+  { 
+    label: 'type',
+    sublabel: '类型',
+    submenu: [
+      { label: '选项1', type: 'checkbox' },
+      { type: 'separator' },
+      { label: '单向选项1', type: 'radio' },
+      { type: 'separator' },
+      { label: 'windows', type: 'submenu', role: 'windowMenu' }
+    ]
+  }
+]);
+Menu.setApplicationMenu( menus );
+```
+
+### 7.3 其他选项
+
+​	包含 icon、accelerator（快捷键）、click 等 选项参数。
+
+```javascript
+// 生成需要的菜单项
+const menus = Menu.buildFromTemplate([  
+  {
+    label: '其他',
+    submenu: [
+      { 
+        label: '打开', 
+        icon: path.join( __dirname, 'file-open.png' ), 
+        accelerator: 'ctrl + o',
+        click: () => {
+          console.log( '打开' );
+        }
+      }
+    ]
+  }
+]);
+Menu.setApplicationMenu( menus );
+```
+
+### 7.4 动态创建菜单
+
+​	在渲染进程中通过操作渲染进程中的按钮，动态创建菜单和菜单选项等。Menu 用于创建菜单，MenuItem 创建子菜单，通过 append 方法添加子菜单。
+
+```javascript
+const { remote } = require( 'electron' );
+const Menu = remote.Menu;
+const MenuItem = remote.MenuItem;
+
+// 渲染进程
+window.addEventListener( 'DOMContentLoaded', () => {
+  const inputDom = document.querySelector( '#input' );
+  const addMenuDom = document.querySelector( '#addMenu' );
+  const addItemDom = document.querySelector( '#addItem' );
+  const submenus = new Menu(); // 预留菜单
+
+  addMenuDom.addEventListener( 'click', () => {
+    // 创建菜单
+    const menuItemFile = new MenuItem({ label: '文件', type: 'normal' });
+    const menuItemEdit = new MenuItem({ label: '编辑', type: 'normal' });
+    const customMenu = new MenuItem({ label: '自定义菜单项', submenu: submenus })
+    const menus = new Menu();
+    menus.append( menuItemFile );
+    menus.append( menuItemEdit );
+    menus.append( customMenu );
+    Menu.setApplicationMenu( menus );
+  });
+  // 添加子菜单
+  addItemDom.addEventListener( 'click', () => {
+    const val = inputDom.value.trim();
+    if( val ){
+      submenus.append(
+        new MenuItem({
+          label: val,
+          type: 'normal'
+        })
+      )
+      menuConDom.value = ''
+    }
+  });
+})
 
 ```
 
