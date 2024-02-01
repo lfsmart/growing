@@ -312,5 +312,34 @@ window.addEventListener( 'DOMContentLoaded', () => {
 })
 ```
 
+## 6.7 阻止窗口关闭
 
+​	通过布局实现 modal 弹窗，通过监听窗口卸载事件 `onbeforeunload` 阻止窗口关闭，并弹出自定义模态框，通过自定义模态框销毁 window 窗口。
+
+```javascript
+// 渲染进程
+const { remote } = require( 'electron' );
+window.addEventListener( 'DOMContentLoaded', () => {
+  const closeDom = document.querySelector('#close');
+  const modalDom = document.querySelector( '#modal-box' );
+  const confirmDom = document.querySelector( '#confirm' );
+  const cancelDom = document.querySelector( '#cancel' );
+  const mainWin = remote.getCurrentWindow();
+  window.onbeforeunload = function(){
+    modalDom.classList.add('show');
+    return false;
+  }
+  closeDom.addEventListener('click', () => {
+    mainWin.close();
+  }, false );
+  cancelDom.addEventListener( 'click', () => {
+    modalDom.classList.remove('show');
+  }, false );
+  confirmDom.addEventListener( 'click', () => {
+    mainWin.destroy()
+  }, false )
+})
+
+
+```
 
