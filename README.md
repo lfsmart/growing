@@ -1,3 +1,18 @@
+# 目录说明
+
+| 序号 | 目录名称           | 功能说明                       | 备注     |
+| :--: | ------------------ | ------------------------------ | -------- |
+|  1   | lifecycle          | 生命周期                       |          |
+|  2   | window             | 窗口控制                       | 窗口属性 |
+|  3   | preventWindowClose | 阻止窗口关闭                   |          |
+|  4   | customWindow       | 手动实现窗口关闭、最小化、关闭 |          |
+|  5   | menu               | 选项菜单                       |          |
+|  6   | contextmenu        | 右键菜单                       |          |
+|  7   | communication      | 主进程&渲染进程之间的通信      |          |
+|  8   | communication-1    | 渲染进程&渲染进程之间的通信    |          |
+
+
+
 # 1. 安装
 
 ```bash
@@ -595,3 +610,50 @@ ipcRenderer.on( 'main-send-message', ( ev, data ) => {
   console.log( ev, data );
 })
 ```
+
+## 9.2 渲染进程 & 渲染进程
+
+### 9.2.1 localStorage
+
+1. 在渲染进程中，向主进程发送数据，通知主进程打开新窗口，并通过 localStorage 存储数据。
+
+```javascript
+// renderer.js index.html
+const openDom = document.querySelector( '#open' );
+openDom.addEventListener( 'click', () => {
+  ipcRenderer.send( 'open-new-window');
+  localStorage.setItem('name', `electron lantian ${ Math.random() }`);
+});
+```
+
+2. 在主进程中订阅创建新窗口，并通过 `BrowserWindow.fromId` 设置父窗口。
+
+```javascript
+// main.js
+ipcMain.on( 'open-new-window', (ev, data) => {
+  let subWin = new BrowserWindow({
+    parent: BrowserWindow.fromId( mainWinId ),
+    width: 400,
+    height: 400,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true,
+    }
+  });
+  subWin.loadFile( path.join( __dirname, 'sub.html' ) );
+  subWin.on( 'close', () => {
+    subWin = null
+  });
+});
+```
+
+3. 在新建窗口中，通过 localStorage 获取数据，实现数据在不同的渲染进程中的通信。
+
+```javascript
+// sub.js sub.html 在子窗口中获取存储的数据
+const inputDom = document.querySelector( '#input' );
+const val = localStorage.getItem( 'name' );
+inputDom.value = val;
+```
+
