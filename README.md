@@ -657,3 +657,35 @@ const val = localStorage.getItem( 'name' );
 inputDom.value = val;
 ```
 
+### 9.2.2 通过主进程
+
+​	两个渲染进程之间的通信，通过主进程中转。如 sub.js 发送数据给 renderer.js 实现方式如下:
+
+```javascript
+// sub.js sub.html 点击 sendDom 向 renderer.js 发送数据
+sendDom.addEventListener( 'click', () => {
+  ipcRenderer.send( 'sub-send-renderer', '来自 sub 进程的信息数据' );
+});
+```
+
+​	在主进程 main.js 中中转来自 sub.js 发送的消息，在主进程中需要通过 `BrowserWindow.fromId` 获取需要接收数据的窗口。
+
+```javascript
+// main.js
+ipcMain.on( 'sub-send-renderer', (ev, data ) => {
+  // 通过 main 进程将 data 数据转交给指定的渲染进程
+  // 依据指定的窗口 ID 获取对应的渲染进程，然后发送消息
+  const mainWin = BrowserWindow.fromId( mainWinId );
+  mainWin.webContents.send( 'sub-send-renderer', { from: 'sub-send-renderer', data });
+});
+```
+
+​	在渲染进程中，需要订阅来自主进程事件，接收主进程发送过来的数据。
+
+```javascript
+// renderer.js index.html
+ipcRenderer.on( 'sub-send-renderer', ( ev, data ) => {
+  console.log( data, '我是 renderer, 我收到了来自 sub 渲染进程的数据了' );
+});
+```
+
