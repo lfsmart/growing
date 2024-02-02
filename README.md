@@ -821,3 +821,33 @@ dispatchDom.addEventListener( 'click', () => {
 })
 ```
 
+# 13.全局快捷键
+
+​	注册快捷键和删除快捷键的操作，在主进程中注册和删除应用快捷键。electron 中提供了 globalShortcut 模块用于实现快捷键的注册和删除。
+
+**注册快捷键**：`globalShortcut.register` ，在应用 ready 事件之后注册快捷键。
+
+**删除注册快捷键**：`globalShortcut.unregister` ，需要在应用退出之前删除注快捷键。`globalShortcut.unregisterAll` ，删除所有的快捷键。
+
+**检测是否注册过快捷键**：`globalShortcut.isRegistered` 
+
+```javascript
+const { app, globalShortcut } = require( 'electron' );
+app.on( 'ready', () => {
+  // 返回注册是否成功，成功则返回 true，否则返回 false
+  const ctrlq = globalShortcut.register( 'ctrl + q', () => {
+    // 在这里执行快捷键的命令
+    console.log( '快捷键注册成功' );
+  });
+  if( !ctrlq ){
+    console.log( '注册失败' );
+  }
+  console.log( ctrlq, globalShortcut.isRegistered( 'ctrl + q' ) );
+});
+// 应用退出删除快捷键
+app.on( 'will-quit', () => {
+  globalShortcut.unregister( 'ctrl + q' );
+  globalShortcut.unregisterAll();
+});
+```
+
