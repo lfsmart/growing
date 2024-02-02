@@ -348,7 +348,9 @@ window.addEventListener( 'DOMContentLoaded', () => {
 })
 ```
 
-# 7. 菜单
+
+
+# 7. 菜单控制
 
 ​	通过 electron 中的 Menu 模块操作菜单选项。[官方文档说明](https://www.electronjs.org/zh/docs/latest/api/menu#%E4%B8%BB%E8%8F%9C%E5%8D%95%E7%9A%84%E5%90%8D%E7%A7%B0)，[menu-item](https://www.electronjs.org/zh/docs/latest/api/menu-item ) 。
 
@@ -495,5 +497,101 @@ window.addEventListener( 'DOMContentLoaded', () => {
 })
 ```
 
-# 8. 右键菜单
+# 8. 右键设置
 
+​	右键菜单，通过 Menu 模块设置菜单选项，这一点与菜单选项实现基本一致，右键使用 menu.popup 设置菜单。
+
+```javascript
+const { remote } = require( 'electron' );
+const Menu = remote.Menu;
+window.addEventListener( 'DOMContentLoaded', () => {
+  // 定义菜单内容
+  const menus = Menu.buildFromTemplate([
+    { label: 'Run Code' },
+    { label: '转到定义' },
+    { type: 'separator' },
+    { 
+      label: '其他功能',
+      click: () => {
+        console.log( '其它功能选项被点击了' );
+      }
+    },
+  ]);
+  // 创建菜单
+  window.addEventListener( 'contextmenu', (ev) => {
+    ev.preventDefault();
+    menus.popup({
+      window: remote.getCurrentWindow()
+    })
+  }, false )
+})
+```
+
+
+
+# 9. 进程通信
+
+## 9.1 主进程&渲染进程
+
+​	通过在主进程中订阅事件，在渲染进程中通过主进程的订阅事件向主进程发送数据，主进程和渲染进程通过事件订阅的方式实现相互通信。9.1 和 9.2 均是由渲染进程主动触发异步通信事件，主进程接受渲染进程数据。
+
+### 9.1.1 渲染进程主动触发（异步）
+
+**渲染进程**，通过 `ipcRenderer.send` 方法，向主进程事件 `sync-message` 发送消息。
+
+```javascript
+const { ipcRenderer } = require( 'electron' );
+syncDom.addEventListener( 'click', () => {
+  ipcRenderer.send( 'sync-message', '我是渲染进程的一条异步消息' );
+});
+// 接受主进程数据
+ipcRenderer.on( 'async-fallback-message', (ev, data ) => {
+  console.log({ ev, data });
+})
+```
+
+**主进程**，通过 `ipcMain.on` 订阅 `async-message` 事件，
+
+```javascript
+ipcMain.on( 'async-message', ( ev, data ) => {
+  console.log( data );
+  // 向渲染进程发送异步数据
+  ev.sender.send( 'async-fallback-message', '我是主进程反馈的消息' )
+});
+```
+
+### 9.1.2 渲染进程主动触发（同步）
+
+**渲染进程**，通过 `ipcRenderer.sendSync` 向主进程发送同步消息，返回值主进程反馈的同步数据，即主进程通过主进程事件对象 `ev.returnValue` 的值。
+
+```javascript
+syncDom.addEventListener( 'click', () => {
+  const val = ipcRenderer.sendSync( 'sync-message', '我是渲染进程的一条【同步消息】' );
+  console.log( val ); // 主进程 ev.returnValue 的数据
+});
+```
+
+**主进程**，通过 `ipcMain.on` 订阅同步事件消息，并通过事件对象 `ev.returnValue` 反馈主进程消息。
+
+```javascript
+ipcMain.on( 'sync-message', ( ev, data ) => {
+  console.log( data );
+  ev.returnValue = '我是主进程反馈的消息【同步消息】'
+});
+```
+
+### 9.1.3 主进程主动触发
+
+**主进程，**通过 `BrowserWindow.getFocusedWindow().webContents.send` 向渲染进程发送订阅消息。如下所示：
+
+```javascript
+BrowserWindow.getFocusedWindow().webContents.send( 'main-send-message', '主进程主动触发消息' );
+```
+
+**渲染进程，**通过 `ipcRenderer.on` 监听订阅事件，通过订阅事件接受订阅消息。
+
+```javascript
+ipcRenderer.on( 'main-send-message', ( ev, data ) => {
+  console.log( ev, data );
+})
+```

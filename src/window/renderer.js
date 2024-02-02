@@ -19,4 +19,4 @@ window.addEventListener( 'DOMContentLoaded', () => {
     })
   }, false )
 
-}, false )
+})
