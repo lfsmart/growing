@@ -1,16 +1,17 @@
 # 目录说明
 
-| 序号 | 目录名称           | 功能说明                       | 备注     |
-| :--: | ------------------ | ------------------------------ | -------- |
-|  1   | lifecycle          | 生命周期                       |          |
-|  2   | window             | 窗口控制                       | 窗口属性 |
-|  3   | preventWindowClose | 阻止窗口关闭                   |          |
-|  4   | customWindow       | 手动实现窗口关闭、最小化、关闭 |          |
-|  5   | menu               | 选项菜单                       |          |
-|  6   | contextmenu        | 右键菜单                       |          |
-|  7   | communication      | 主进程&渲染进程之间的通信      |          |
-|  8   | communication-1    | 渲染进程&渲染进程之间的通信    |          |
-|  9   | dialog             | 对话框                         |          |
+| 序号 | 目录名称           | 功能说明                             | 备注     |
+| :--: | ------------------ | ------------------------------------ | -------- |
+|  1   | lifecycle          | 生命周期                             |          |
+|  2   | window             | 窗口控制                             | 窗口属性 |
+|  3   | preventWindowClose | 阻止窗口关闭                         |          |
+|  4   | customWindow       | 手动实现窗口关闭、最小化、关闭       |          |
+|  5   | menu               | 选项菜单                             |          |
+|  6   | contextmenu        | 右键菜单                             |          |
+|  7   | communication      | 主进程&渲染进程之间的通信            |          |
+|  8   | communication-1    | 渲染进程&渲染进程之间的通信          |          |
+|  9   | dialog             | 对话框                               |          |
+|  11  | shell & iframe     | 默认浏览器打开外链、在应用内打开外链 |          |
 
 
 
@@ -715,5 +716,78 @@ remote.dialog.showOpenDialog({
 });
 // dialog.showErrorBox
 remote.dialog.showErrorBox( '自定义标题', '当前错误内容' );
+```
+
+# 11. shell & iframe
+
+## 11.1 shell
+
+​	shell 模块式主进程和渲染进程都可以使用的模块，高版本（> 14.x）只存在于主进程，使用默认应用程序管理文件和 url。iframe 与 webview 类似，官方建议使用 iframe。
+
+​	通过 shell 模块的 `shell.openExternal` 方法实现打开外链，如下所示: 
+
+```javascript
+const { remote, shell, ipcRenderer } = require( 'electron' );
+shell.openExternal( 'https://www.electronjs.org/zh/docs/latest/api/shell' ); // 在默认浏览器中打开外链
+```
+
+​	通过 shell 模块中的 `shell.showItemInFolder` 方法打开文件夹，如下所示：
+
+```javascript
+const { remote, shell, ipcRenderer } = require( 'electron' );
+const path = require( 'path' );
+shell.showItemInFolder( path.resolve( __dirname ) ); // 打开目录
+```
+
+## 11.2 iframe
+
+​	使用 iframe 在应用内部打开外链，通过操作 iframe 的 src 属性实现不同的外链之间的切换。主进程通过 `BrowserWindow.getFocusedWindow().webContents.send` 向渲染进程发送消息。
+
+```javascript
+const { BrowserWindow, shell, Menu } = require( 'electron' );
+const menus = Menu.buildFromTemplate([
+  { 
+    label: '菜单',
+    submenu: [
+      {
+        label: '关于',
+        click(){
+          shell.openExternal( 'https://www.electronjs.org/zh/docs/latest/api/shell' ); // 使用默认浏览器打开外链
+        }
+      }, 
+      {
+        label: '打开',
+        click(){
+          // 主进程发布消息通知订阅者（渲染进程）通过订阅事件 openUrl
+          BrowserWindow.getFocusedWindow().webContents.send( 'openUrl' );
+        }
+      }
+    ]
+  }
+]);
+Menu.setApplicationMenu( menus );
+```
+
+​	在渲染进程中操作 iframe 在应用内部打开外部链接，如下所示：
+
+```javascript
+const { remote, shell, ipcRenderer } = require( 'electron' );
+const iframeDom = document.querySelector( '#webview' ); // 获取 iframe 元素
+// 渲染进程，订阅主进程 openUrl 事件，在应用内打开外链
+ipcRenderer.on( 'openUrl', (e, data) => {
+  iframeDom.src = 'https://react.docschina.org/';
+})
+```
+
+​	在 iframe 全屏展示样式处理，样式如下所示：
+
+```css
+iframe{ 
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+}
 ```
 

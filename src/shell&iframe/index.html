@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      *{ margin: 0; padding: 0; }
+      iframe{ position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
+    </style>
+  </head>
+  <body>
+    <h3>shell & iframe</h3>
+    <div><a href="https://cn.vuejs.org">打开外链(默认)</a></div>
+    <div><a href="https://cn.vuejs.org" id="openLink">打开外链(shell.openExternal)</a></div>
+    <div>
+      <button id="openFolder">打开目录</button>
+    </div>
+    <iframe src="https://cn.vuejs.org" frameborder="0" id="webview"></iframe>
+    <script src="./renderer.js"></script>
+  </body>
+</html>
