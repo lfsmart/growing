@@ -791,3 +791,33 @@ iframe{
 }
 ```
 
+# 12. 消息通知
+
+​	消息通知，使用的是 html5 的 api, [官方文档](https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API/Using_the_Notifications_API)。
+
+```javascript
+// 在渲染进程中
+dispatchDom.addEventListener( 'click', () => {
+  const notification = new window.Notification('title-electron',{
+    body: '学习 electron 相关 API ',
+    icon: './apple-touch-icon.png',
+  });
+  // 显示
+  notification.addEventListener( 'show', () => {
+    console.log( 'show' );
+  });
+  // 点击卡片
+  notification.addEventListener( 'click', () => {
+    console.log( 'click' );
+  });
+  // 关闭通知消息
+  notification.addEventListener( 'close', () => {
+    console.log( 'close' );
+  });
+  // 卡片消息报错
+  notification.addEventListener( 'error', () => {
+    console.log( 'error' );
+  });
+})
+```
+
