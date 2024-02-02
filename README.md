@@ -10,6 +10,7 @@
 |  6   | contextmenu        | 右键菜单                       |          |
 |  7   | communication      | 主进程&渲染进程之间的通信      |          |
 |  8   | communication-1    | 渲染进程&渲染进程之间的通信    |          |
+|  9   | dialog             | 对话框                         |          |
 
 
 
@@ -687,5 +688,32 @@ ipcMain.on( 'sub-send-renderer', (ev, data ) => {
 ipcRenderer.on( 'sub-send-renderer', ( ev, data ) => {
   console.log( data, '我是 renderer, 我收到了来自 sub 渲染进程的数据了' );
 });
+```
+
+# 10. dialog
+
+​	内置对话框，[官方文档](https://www.electronjs.org/zh/docs/latest/api/dialog) ，基本用法如下所示：
+
+```javascript
+// dialog.showOpenDialog
+remote.dialog.showOpenDialog({
+  defaultPath: __dirname, // 当前路径
+  buttonLabel: '请选择',
+  title: 'electron',
+  properties: [
+    // 'openFile',
+    // 'openDirectory',
+    'multiSelections',
+  ],
+  filters: [
+    { "name": "代码文件", extensions: [ 'js', 'json', 'html' ] },
+    { "name": "图片文件", extensions: [ 'ico', 'jpeg', 'png' ] },
+    { "name": "媒体类型", extensions: [ 'avi', 'mp4', 'mp3' ] },
+  ]
+}).then( res => {
+  console.log(res);
+});
+// dialog.showErrorBox
+remote.dialog.showErrorBox( '自定义标题', '当前错误内容' );
 ```
 
