@@ -1,17 +1,21 @@
 # 目录说明
 
-| 序号 | 目录名称           | 功能说明                             | 备注     |
-| :--: | ------------------ | ------------------------------------ | -------- |
-|  1   | lifecycle          | 生命周期                             |          |
-|  2   | window             | 窗口控制                             | 窗口属性 |
-|  3   | preventWindowClose | 阻止窗口关闭                         |          |
-|  4   | customWindow       | 手动实现窗口关闭、最小化、关闭       |          |
-|  5   | menu               | 选项菜单                             |          |
-|  6   | contextmenu        | 右键菜单                             |          |
-|  7   | communication      | 主进程&渲染进程之间的通信            |          |
-|  8   | communication-1    | 渲染进程&渲染进程之间的通信          |          |
-|  9   | dialog             | 对话框                               |          |
-|  11  | shell & iframe     | 默认浏览器打开外链、在应用内打开外链 |          |
+| 序号 | 目录名称           | 功能说明                             | 备注         |
+| :--: | ------------------ | ------------------------------------ | ------------ |
+|  1   | lifecycle          | 生命周期                             |              |
+|  2   | window             | 窗口控制                             | 窗口属性     |
+|  3   | preventWindowClose | 阻止窗口关闭                         |              |
+|  4   | customWindow       | 手动实现窗口关闭、最小化、关闭       |              |
+|  5   | menu               | 选项菜单                             |              |
+|  6   | contextmenu        | 右键菜单                             |              |
+|  7   | communication      | 主进程&渲染进程之间的通信            |              |
+|  8   | communication-1    | 渲染进程&渲染进程之间的通信          | localStorage |
+|  9   | communication-2    | 渲染进程通信，通过主进程中转         |              |
+|  10  | dialog             | 对话框                               |              |
+|  11  | shell & iframe     | 默认浏览器打开外链、在应用内打开外链 |              |
+|  12  | notification       | 桌面消息通知                         |              |
+|  13  | shortcut           | 快捷键注册、删除、检测               |              |
+|  14  | clipboard          | 剪切板                               |              |
 
 
 
@@ -38,7 +42,7 @@ npm i -g nodemon
 ​	在 package.json 中配置应用主进程入口文件 main.js 和 开发环境的配置。
 
 ```json
-"main": 'main.js', 
+"main": "main.js", 
 "scripts": {
   "dev": "nodemon --delay 500 --watch src/**/*.js --exec electron .",
 },   
@@ -844,10 +848,42 @@ app.on( 'ready', () => {
   }
   console.log( ctrlq, globalShortcut.isRegistered( 'ctrl + q' ) );
 });
-// 应用退出删除快捷键
+ // 应用退出删除快捷键
 app.on( 'will-quit', () => {
   globalShortcut.unregister( 'ctrl + q' );
   globalShortcut.unregisterAll();
 });
+```
+
+# 14. 剪切板操作
+
+​	通过 clipboard 模块实现剪切板的功能，不仅可以复制粘贴文本还可以是图片或其他类型的文件。
+
+**写入和读取文本**，如下所示：
+
+```javascript
+const { clipboard, nativeImage } = require( 'electron' );
+ // 将文本写入剪切板
+clipboard.writeText( 'electron' );
+ // 读取剪切板内容
+const val = clipboard.readText();
+```
+
+**读取和写入图片信息**，写入图片信息需要使用图片的绝对路径，并通过 nativeImage 模块转成原生对象，如下所示：
+
+```javascript
+const { clipboard, nativeImage } = require( 'electron' );
+ // 需要使用绝对路径
+const imgPath = path.resolve( __dirname, 'apple-touch-icon.png' );
+ // 将图片放置于剪切板当中要求图片类型属于 nativeImage 实例
+let oImage = nativeImage.createFromPath( imgPath ); 
+ // 将图片信息写入剪切板 
+clipboard.writeImage( oImage );
+ // 读取剪切板信息
+oImage = clipboard.readImage()
+ // 将剪切板肿的图片作为 dom 显示在界面上
+const img = new Image()
+img.src = oImage.toDataURL()
+document.body.appendChild( img )
 ```
 
