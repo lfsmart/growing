@@ -1,9 +1,10 @@
 import React from 'react';
 import { Button, Checkbox, Form, Input } from 'antd';
+
 type FieldType = {
-  username?: string;
-  password?: string;
-  remember?: string;
+  username: OrNull<string>;
+  password: OrNull<string>;
+  remember: OrNull<string>;
 };
 
 const onFinish = (values: FieldType) => {
@@ -14,6 +15,8 @@ const onFinishFailed = (errorInfo: unknown) => {
   console.log('Failed:', errorInfo);
 };
 
+
+
 export const Test1: React.FC = () => (
   <Form
     name="basic"
@@ -21,11 +24,11 @@ export const Test1: React.FC = () => (
     wrapperCol={{ span: 16 }}
     style={{ maxWidth: 600 }}
     initialValues={{ remember: true }}
-    onFinish={onFinish}
-    onFinishFailed={onFinishFailed}
+    onFinish={ onFinish }
+    onFinishFailed={ onFinishFailed }
     autoComplete="off"
   >
-    <Form.Item<FieldType>
+    <Form.Item
       label="Username"
       name="username"
       rules={[{ required: true, message: 'Please input your username!' }]}
@@ -33,7 +36,7 @@ export const Test1: React.FC = () => (
       <Input />
     </Form.Item>
 
-    <Form.Item<FieldType>
+    <Form.Item
       label="Password"
       name="password"
       rules={[{ required: true, message: 'Please input your password!' }]}
@@ -41,7 +44,7 @@ export const Test1: React.FC = () => (
       <Input.Password />
     </Form.Item>
 
-    <Form.Item<FieldType>
+    <Form.Item
       name="remember"
       valuePropName="checked"
       wrapperCol={{ offset: 8, span: 16 }}

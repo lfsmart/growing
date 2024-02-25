@@ -1117,7 +1117,7 @@ export const ListContent = () => {
 - [最小化 props 的变化](https://react.docschina.org/reference/react/memo#minimizing-props-changes)
 - [指定自定义比较函数](https://react.docschina.org/reference/react/memo#specifying-a-custom-comparison-function)
 
-​	当未使用 memo 时，每次 render 子组件都会被执行，无论是否有状态。在使用 `memo` 之后，只要状态 props 不发生变化，子组件不会执行。不用过多的使用 memo，出现性能问题再着手考虑和使用 `memo` 优化渲染，比较适合无状态组件。如下所示：
+​	当未使用 memo 时，每次 render 子组件都会被执行，无论是否有状态。在使用 `memo` 之后，只要状态 props 不发生变化，子组件不会执行。不用过多的使用 memo，出现性能问题再着手考虑和使用 `memo` 优化渲染，比较适合无状态组件，类似 class 方式中的 `PureComponent` 如下所示：
 
 ```tsx
 import { useState, memo } from "react";
@@ -1145,7 +1145,7 @@ export const UseMemo = () => {
 
 ### 11.11 useMemo
 
-​	`useMemo` 是一个 React Hook，它在每次重新渲染的时候能够缓存计算的结果，缓存的是状态而 `useCallback` 缓存的是状态函数，一个缓存的是状态结果，一个缓存的是状态函数 。
+​	`useMemo` 是一个 React Hook，它在每次重新渲染的时候能够缓存计算的结果，缓存的是状态而 `useCallback` 缓存的是状态函数，一个缓存的是状态结果，一个缓存的是状态函数，类似于 vue 中的计算属性 `computed` 的功能。
 
 - [跳过代价昂贵的重新计算](https://react.docschina.org/reference/react/useMemo#skipping-expensive-recalculations)
 - [跳过组件的重新渲染](https://react.docschina.org/reference/react/useMemo#skipping-re-rendering-of-components)
