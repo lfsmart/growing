@@ -20,6 +20,7 @@ import { Lazy } from './Lazy';
 import { CreatePortal } from './CreatePortal';
 import { Profiler } from './Profiler';
 import { Tailwind } from './Tailwind';
+import { StateCtrl } from './StateCtrl';
 import * as ReactSpring from './ReactSpring';
 import * as Test from './Test';
 
@@ -46,6 +47,7 @@ export {
   CreatePortal,
   Profiler,
   Tailwind,
+  StateCtrl,
   ReactSpring,
   Test
 }

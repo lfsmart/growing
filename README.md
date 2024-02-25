@@ -1774,3 +1774,72 @@ export const Animate = ({ isVisible, children }: { isVisible: boolean, children?
 ## 20. react-BMapGL
 
  百度 react 版的api：[React-BMapGL](https://lbsyun.baidu.com/solutions/reactBmapDoc ) 
+
+## 21. 轻量级状态管理
+
+​	使用 `zustand` 库实现状态管理，[zustand 官方文档](https://docs.pmnd.rs/zustand/getting-started/introduction) 。
+
+```bash
+npm i zustand # 直接安装
+```
+
+​	第一步：定义状态通过 `zustand` 内置的方法实现 hook 式的状态管理，使用 create 函数创建状态管理。介意在 create 函数中返回任意的数据类型，可以是函数或状态值，然后通过 create 的参数 set 改变状态数据。
+
+```tsx
+import { create } from 'zustand'
+type State = {
+  count: number;
+  role?: string;
+}
+type ActionType =  {
+  type: string;
+  payload?: string | number | Array<any> | object;
+}
+type Actions = {
+  dispatch: (action: ActionType) => void;
+  dispatchAdd: (payload: number) => void;
+}
+export const useCount = create<State & Actions>( set => ({
+  count: 0,
+  role: 'admin',
+  dispatchAdd: payload => {
+    set( state => ({ count: state.count + payload }) );
+  },
+  dispatch: action => {
+    const { type, payload } = action;
+    switch( type ){
+      case 'add': set( state => ({ count: state.count + 1 }) ); break;
+      case 'reset': set({ count: 0 }); break;
+      case 'sub': set( state => ({ count: state.count - 1 }) ); break;
+    }
+  }
+}));
+```
+
+​	第二步：在组件中通过 hook 的方式实现状态管理数据、dispatch 触发 action。定义在 create 函数返回值中的数据或方法均可以通过解构的方式在组件中获取到，且可以自动合并定义的状态，而 useState 则不具备这个能力。 
+
+```tsx
+// import * as store from '@/store';
+import { useCount } from '@/store';
+export const StateCtrl = () => {
+  const { role, count, dispatch, dispatchAdd } = useCount();
+  const handleClick = (bType: string) => {
+    switch( bType ){
+      case 'add': dispatch({ type: 'add', payload: 20 }); break;
+      case 'reset': dispatch({ type: 'reset' }); break;
+      case 'sub': dispatch({ type: 'sub' }); break;
+    }
+  }
+  return (
+    <>
+      <div>{ role }, { count }</div>
+      <button onClick={ () => handleClick( 'add' ) }>add</button>
+      <button onClick={ () => dispatchAdd( count ) }>dispatchAdd</button>
+      <button onClick={ () => handleClick( 'reset' ) }>reset</button>
+      <button onClick={ () => handleClick( 'sub' ) }>sub</button>
+    </>
+  )
+}
+```
+
+​	自合并状态，而不是将所有的状态解构后，通过覆盖的方式完成状态的修改。
