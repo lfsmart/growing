@@ -1,0 +1,11 @@
+@import './../func/index';
+
+/* @lantian 字体粗细 */
+
+@fw-list: range( 4, 8, 1 );
+
+each(@fw-list, {
+	.f-fw@{value}{
+		.f-fontWeight( @value * 100 );
+	}
+});

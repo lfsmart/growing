@@ -1,0 +1,65 @@
+@import "./../func/index";
+
+/* @lantian 内边距 */
+
+// padding-top
+each( range( 6, 50, 2 ), {
+  .f-pt@{value} {
+    .f-pt(@value);
+  }
+});
+
+// padding-left
+each( range( 6, 50, 2 ), {
+  .f-pl@{value} {
+    .f-pl(@value);
+  }
+});
+
+// padding-bottom
+each( range( 6, 50, 2 ), {
+  .f-pb@{value} {
+    .f-pb(@value);
+  }
+});
+each( range( 10, 70, 10 ), {
+  .f-pb@{value} {
+    .f-pb(@value);
+  }
+});
+
+// padding-right
+each( range( 10, 26, 2 ), {
+  .f-pr@{value} {
+    .f-pr(@value);
+  }
+});
+
+
+// padding-left padding-right
+each( range( 6, 50, 2 ), {
+  .f-plr@{value} {
+    .f-plr(@value);
+  }
+});
+
+// padding
+each( range( 10, 50, 10 ), {
+  .f-p@{value} {
+    .f-padding(@value, padding);
+  }
+});
+.f-ptb24{
+  .f-padding(24);
+}
+
+// padding-top padding-bottom
+each( range( 10, 50, 10), {
+  .f-ptb@{value} {
+    .f-pt(@value);
+    .f-pb(@value);
+  }
+});
+
+
+

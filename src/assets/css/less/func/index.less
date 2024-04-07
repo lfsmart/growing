@@ -1,0 +1,151 @@
+/* @lantian 常用 less 函数 和 less 变量 */
+
+/****************** 盒模型 ******************/
+.f-bs( @val:border-box ){
+	box-sizing: @val;
+}
+
+/****************** 布局 ******************/
+.f-display( @var: block ){
+	display: @var;
+}
+
+/****************** 定位 ******************/
+.f-pos( @var: relative ){
+	position: @var;
+}
+
+/****************** 字体大小 ******************/
+.f-fz( @val ){
+	font-size: ~'@{val}px';
+}
+
+/****************** 外边距 ******************/
+.f-margin( @val, @key:margin ){
+	@{key}: @val;
+}
+.f-ml( @val, @unit: px ){
+	margin-left: ~'@{val}@{unit}';
+}
+.f-mr( @val, @unit: px ){
+	margin-right: ~'@{val}@{unit}';
+}
+.f-mt( @val, @unit: px ){
+	margin-top: ~'@{val}@{unit}';
+}
+.f-mb( @val, @unit: px ){
+	margin-bottom: ~'@{val}@{unit}';
+}
+.f-mtb( @val, @unit: px ){
+	.f-mt( @val, @unit: px );
+	.f-mb( @val, @unit: px )
+}
+.f-mlr( @val, @unit: px ){
+	.f-ml( @val, @unit: px );
+	.f-mr( @val, @unit: px )
+}
+.f-m( @val, @unit: px ){
+	margin: ~'@{val}@{unit}';
+}
+
+/****************** 内边距 ******************/
+.f-padding( @val, @key:padding,  @unit: px){
+	@{key}: ~'@{val}@{unit}';
+}
+.f-pl( @val, @unit: px ){
+	padding-left: ~'@{val}@{unit}';
+}
+.f-pr( @val, @unit: px ){
+	padding-right: ~'@{val}@{unit}';
+}
+.f-pt( @val, @unit: px ){
+	padding-top: ~'@{val}@{unit}';
+}
+.f-pb( @val, @unit: px ){
+	padding-bottom: ~'@{val}@{unit}';
+}
+.f-ptb( @val, @unit: px ){
+	padding-top: '@{val}@{unit}';
+	padding-bottom: '@{val}@{unit}';
+}
+.f-plr( @val, @unit: px ){
+	padding-left: ~'@{val}@{unit}';
+	padding-right: ~'@{val}@{unit}';
+}
+
+/****************** 宽高 ******************/
+.f-w( @val, @unit: 'px' ){
+	width: ~'@{val}@{unit}';
+}
+.f-h( @val, @unit: 'px' ){
+	height: ~'@{val}@{unit}';
+}
+
+/****************** 颜色 ******************/
+.f-color( @val ){
+	color: @val;
+}
+
+/****************** 文字居中 ******************/
+.f-ta(@val:center){
+	text-align: @val;
+}
+
+/****************** 浮动 *********************/
+.f-float( @val ){
+	float: @val;
+}
+
+/****************** 背景色 *********************/
+.f-bgc( @val ){
+	background-color: @val;
+}
+
+/****************** 水平线条 ******************/
+.f-hline(@px: 1px, @color:#E5E5E5){
+  .f-pos();
+  &::after{
+		.f-pos(absolute);
+		width: 100%;
+    left: 0;
+    bottom: 0;
+    background: @color;
+		height: @px;
+		content: '';
+		display: block;
+  }
+}
+
+/****************** flex 相关参数 ******************/
+.f-flex( @h:center, @v:center, @dir: row ){
+	display: flex;
+	justify-content: @h;
+	align-items: @v;
+	flex-direction: @dir;
+}
+
+/****************** 多行省略号 ******************/
+.f-clamp( @count: 2 ){
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-wrap: break-word;
+	white-space: normal !important;
+	-webkit-line-clamp: @count;	/* 行数 */
+}
+
+/****************** 文字加粗 ******************/
+.f-fontWeight( @bold: none ){
+	font-weight: @bold;
+}
+
+
+
+
+
+
+
+
+
+
+
+

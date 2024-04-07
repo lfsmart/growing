@@ -1,0 +1,57 @@
+@import './../func/index';
+
+/** @lantian 居中 主要针对 block */
+
+// flex 水平垂直居中, 区别于 .f-phv
+.f-fhvc{
+  .f-flex()
+}
+
+// flex 水平对齐方式
+.f-fhsb{
+  .f-display(flex);
+  justify-content: space-between;
+}
+.f-fhsa{
+  .f-display(flex);
+  justify-content: space-around;
+}
+.f-fhc{
+  .f-display(flex);
+  justify-content: center;
+}
+
+// flex 垂直对齐方式
+.f-fvsb{
+  .f-display(flex);
+  align-items: space-between;
+}
+.f-fvsa{
+  .f-display(flex);
+  align-items: space-around;
+}
+.f-fvc{
+  .f-display(flex);
+  align-items: center;
+}
+
+// 使用定位 盒子中居中，父盒子需要定位
+.f-phv{
+	.f-pos(absolute);
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
+}
+
+// flex 主轴方向
+.f-fdc {
+  flex-direction: column;
+}
+.f-fdr{
+  flex-direction: row;
+}
+
+// 换行
+.f-fww{
+  flex-wrap: wrap;
+}

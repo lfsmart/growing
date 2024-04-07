@@ -1,0 +1,59 @@
+@import './../func/index';
+/* @lantian 外边距 */
+
+/* margin-right */
+each( range( 2, 50, 2 ), {
+  .f-mr@{value} {
+    .f-mr(@value);
+  }
+});
+
+/* margin-left */
+each( range( 2, 50, 2 ), {
+  .f-ml@{value} {
+    .f-ml(@value);
+  }
+});
+each( range( 90, 120, 10 ), {
+  .f-ml@{value} {
+    .f-ml(@value);
+  }
+});
+
+
+/* margin-top */
+each( range( 4, 50, 2 ), {
+  .f-mt@{value} {
+    .f-mt(@value);
+  }
+});
+each( range( 90, 120, 10 ), {
+  .f-mt@{value} {
+    .f-mt(@value);
+  }
+});
+
+
+/* margin-bottom */
+each( range( 4, 50, 2 ), {
+  .f-mb@{value} {
+    .f-mb(@value);
+  }
+});
+
+
+/* margin-left margin-right */
+each( range( 4, 20, 2 ), {
+  .f-mlr@{value} {
+    .f-mlr(@value);
+  }
+});
+
+/* margin-top margin-bottom */
+each( range( 10, 50, 10 ), {
+  .f-mtb@{value} {
+    .f-mtb(@value);
+  }
+});
+
+

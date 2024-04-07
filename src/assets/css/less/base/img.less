@@ -1,0 +1,10 @@
+@import './../func/index.less';
+
+/** @lantian 图片宽度 */
+
+each( range( 30, 100, 10 ), {
+  .f-img@{value} {
+    .f-w(@value);
+    .f-h(@value);
+  }
+});

@@ -1,0 +1,13 @@
+/** @lantian 圆角模块 */
+
+@br-list: range( 2, 10, 2 );
+each(@br-list, {
+  .f-br@{value} {
+    border-radius: ~'@{value}px';
+  }
+});
+
+.f-br{
+  border-radius: 100%;
+}
+
