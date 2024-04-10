@@ -17,3 +17,33 @@ type T2 = Required<MenuProps>['items'];
 // 2. 取出了 ItemType 的数据类型
 type T3 = ItemType[];
 type T4 = T3[number];
+
+
+// 实验交叉类型和联合类型
+type T5 = {
+  name: string;
+  age: number;
+}
+type T6 = {
+  sex: string;
+}
+
+type T7 = {
+  address: string;
+}
+
+type T8 = T5 | T6;
+
+const t8: T8 = {
+  sex: ''
+}
+
+type T9 = T8 & T7;
+const t9: T9 = {
+  address: '',
+  name: '',
+  age: 0,
+}
+
+
+

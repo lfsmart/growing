@@ -74,5 +74,16 @@ namespace B17 {
   //   -readonly [P in keyof T]: T[P]
   // }
   // type T16 = MyReadonly2<Person>
+  function AA(name: string, age: number): string{
+    return '';
+  }
+  type pType = Parameters<typeof AA>;
+  type T16 = pType[0]
+
+
+
+
+
+
 }
 
